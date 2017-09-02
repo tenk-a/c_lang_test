@@ -1,0 +1,3023 @@
+** cl_test_src
+
+*** &aname(a2);  c/plain_char_is_signed.c
+
+char の符号
+
+ int main() {
+     char c = -1;
+     return !(c < 0);
+ }
+
+*** &aname(a3);  c/char_bit_size.c
+
+char のビット数
+
+ int main() {
+     int i;
+     char c;
+     c = 0x01;
+     for (i = 0; c && i < 32; ++i) {
+         c <<= 1;
+     }
+     return i;
+ }
+
+*** &aname(a4);  c/sizeof_char.c
+
+char のバイト数
+
+ int main() {
+     return sizeof(char);
+ }
+
+*** &aname(a5);  c/sizeof_short.c
+
+short のバイト数
+
+ int main() {
+     return sizeof(short);
+ }
+
+*** &aname(a6);  c/sizeof_int.c
+
+int のバイト数
+
+ int main() {
+     return sizeof(int);
+ }
+
+*** &aname(a7);  c/sizeof_long.c
+
+long のバイト数
+
+ int main() {
+     return sizeof(long);
+ }
+
+*** &aname(a8);  c/sizeof_ptr.c
+
+ポインタのバイト数
+
+ int main() {
+     return sizeof(char*);
+ }
+
+*** &aname(a9);  c/sizeof_float.c
+
+float のバイト数
+
+ int main() {
+     return sizeof(float);
+ }
+
+*** &aname(a10);  c/sizeof_double.c
+
+double のバイト数
+
+ int main() {
+     return sizeof(double);
+ }
+
+*** &aname(a11);  c/sizeof_longdouble.c
+
+long double のバイト数
+
+ int main() {
+     return sizeof(long double);
+ }
+
+*** &aname(a12);  c/short_int.c
+
+short int と記述できるか
+
+ short int si = 0;
+ 
+ int main() {
+     return si;
+ }
+
+*** &aname(a13);  c/unsigned_short_int.c
+
+unsigned short int と記述できるか
+
+ unsigned short int usi = 0;
+ 
+ int main() {
+     return usi;
+ }
+
+*** &aname(a14);  c/unsigned_int.c
+
+unsigned int と記述できるか
+
+ unsigned int ui = 0;
+ 
+ int main() {
+     return ui;
+ }
+
+*** &aname(a15);  c/long_int.c
+
+long int と記述できるか
+
+ long int li = 0;
+ 
+ int main() {
+     return (int)li;
+ }
+
+*** &aname(a16);  c/unsigned_long_int.c
+
+unsigned long int と記述できるか
+
+ unsigned long int uli = 0;
+ 
+ int main() {
+     return (int)uli;
+ }
+
+*** &aname(a17);  c/cmp_int_uint.c
+
+int値とunsigned値の比較(int→unsigned整数昇格)
+
+ int ck0_10(int n) {
+     return n < 10U;
+ }
+ 
+ int main() {
+     return !(ck0_10(-1) == 0);
+ }
+
+実プログラムでは (unsigned)n < 10U か 0 <= n && n < 10 のようにするだろう.
+
+*** &aname(a18);  c/m1div4294967295.c
+
+整数昇格の都合で -1/4294967295 の結果が 0(C99以降) か 1(以前)か
+
+ /* http://d.hatena.ne.jp/yupo5656/20070204/p1 */
+ #if  (defined(_MSC_VER) && _MSC_VER < 1300) || (defined(__BORLANDC__) && __BORLANDC__ < 0x570) || defined(__ORANGEC__)
+ typedef unsigned __int64    ULONGLONG;
+ #elif defined(LSI_C)
+ typedef unsigned long       ULONGLONG;
+ #else
+ typedef unsigned long long  ULONGLONG;
+ #endif
+ 
+ ULONGLONG fn(int n) {
+     return n / 4294967295;
+ }
+ 
+ int main() {
+     return (int)fn(-1);
+ }
+
+4294967295 が unsigned long として扱われるか long long として扱われるか. [[こちら>http://d.hatena.ne.jp/yupo5656/20070204/p1]] を参考に用意( LP64で負の割算がc99仕様でない場合結果は-1. サフィックス無の時は未定義動作の類らしい ) (ソースでlong long 64bit整数がない場合は32bit整数でエラー回避)
+
+*** &aname(a19);  c/macro_ifdef.c
+
+&color(#0){ #ifdef が使えるか };
+
+ #ifndef RC
+ #define RC  0
+ #endif
+ int main() {
+ # ifdef RC
+     return RC;
+ # else
+     return 1;
+ # endif
+ }
+
+*** &aname(a20);  c/macro_define.c
+
+引数有の #define マクロが使えるか
+
+ #define ADD3(x,y,z)             ((x)+(y)+(z))
+ #define MACRO_A(a,x,y,z)        a(x,y,z)
+ 
+ int main() {
+     int i;
+     i  = ADD3(10, -11, 2);
+     i += MACRO_A(ADD3, 100, -128, 27);
+     return i;
+ }
+
+*** &aname(a21);  c/macro_file_line.c
+
+__FILE__ __LINE__ __DATE__ __TIME__ があるか
+
+ int main() {
+     const char *fname = __FILE__;
+     int         line  = __LINE__;
+     const char *sdate = __DATE__;
+     const char *stime = __TIME__;
+     return !(fname[0] != 0 && line == 3 && sdate[0] != 0 && stime[0] != 0);
+ }
+
+*** &aname(a22);  c/bitfield.c
+
+ビットフィールドが使えるか
+
+ struct ST {
+     unsigned    a : 1;
+     unsigned    b : 7;
+ } st = { 0, 63 };
+ 
+ int main() {
+     struct ST   st2;
+     st2.a = 1;
+     st2.b = 127;
+     return st.a * st.b * st2.a * st2.b;
+ }
+
+*** &aname(a23);  c/local_var_init.c
+
+ローカル変数定義で初期値が使えるか
+
+ int main() {
+     int   a = 10;
+     short b = 5;
+     return ( a - b*2 );
+ }
+
+*** &aname(a24);  c/local_block_var.c
+
+ブロック内でローカル変数定義できるか
+
+ int main() {
+     int a;
+     a  = 8;
+     {
+         int b;
+         b  = a * 2;
+         a += b;
+     }
+     return ( !(a == 24) );
+ }
+
+*** &aname(a25);  c/local_static_var.c
+
+関数ローカルでstatic変数定義できるか
+
+ int main() {
+     static int a = 0;
+     a *= 2;
+     return ( a );
+ }
+
+*** &aname(a26);  c/local_block_static_var.c
+
+ブロック内でstatic変数定義できるか
+
+ int main() {
+     int a;
+     a  = 8;
+     {
+         static int b;
+         b  = a * 2;
+         a += b;
+     }
+     return ( !(a == 24) );
+ }
+
+*** &aname(a27);  c/union.c
+
+union が使えるか
+
+ union U {
+     int     i;
+     char*   p;
+ };
+ 
+ int main() {
+     return !(sizeof(union U) == sizeof(char*));
+ }
+
+*** &aname(a28);  c/struct1.c
+
+構造体が使えるか
+
+ struct ST {
+     int x;
+     int y;
+ };
+ 
+ struct ST st = { 1, -1 };
+ 
+ int main() {
+     return st.x + st.y ;
+ }
+
+*** &aname(a29);  c/struct2.c
+
+同名のメンバー名が他のstructで別の型・相対位置でも使えるか
+
+ typedef struct {
+     int x;
+     int y;
+ } ST;
+ 
+ typedef struct {
+     char    name[16];
+     short   x;
+     short   y;
+ } ST2;
+ 
+ ST  st1 = { 1, -1 };
+ ST2 st2 = {"dummy", 10, -10};
+ 
+ int main() {
+     return  st1.x + st1.y + st2.x + st2.y ;
+ }
+
+*** &aname(a30);  c/number_of_int32_without_l.c
+
+サフィックス無で32ビット符号付整数リテラルが使えるか
+
+ int main() {
+     long l = 1234567890;
+     l += 3;
+     return !(l == 1234567893);
+ }
+
+8/16bitコンパイラを想定(sizeof(int)=2). 普通は intよりも幅広の整数リテラルを扱う場合はサフィックスで明示する.
+
+*** &aname(a31);  c/number_of_uint32_without_ul.c
+
+サフィックス無で32ビット符号無16進整数リテラルが使えるか
+
+ int main() {
+     unsigned long l = 0x12345678;
+     l += 0x10101010;
+     return !(l == 0x22446688);
+ }
+
+8/16bitコンパイラを想定(sizeof(int)=2). 普通は intよりも幅広の整数リテラルを扱う場合はサフィックスで明示する.
+
+*** &aname(a32);  c/number_of_int64_without_ll.c
+
+サフィックス無で64ビット符号付整数リテラルが使えるか
+
+ #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__DMC__) || defined(__WATCOMC__) || defined(__ORANGEC__)
+ typedef __int64     LONGLONG;
+ #else
+ typedef long long   LONGLONG;
+ #endif
+ 
+ int main() {
+     LONGLONG ll = 12345678901234567890;
+     ll += 3;
+     return !(ll == 12345678901234567893);
+ }
+
+sizeof(int)=4 sizeof(long long)=8 を想定. 普通は intよりも幅広の整数リテラルを扱う場合はサフィックスで明示する.
+
+*** &aname(a33);  c/number_of_uint64_without_ull.c
+
+サフィックス無で64ビット符号無16進整数リテラルが使えるか
+
+ #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__DMC__) || defined(__WATCOMC__) || defined(__ORANGEC__)
+ typedef unsigned __int64    ULONGLONG;
+ #else
+ typedef unsigned long long  ULONGLONG;
+ #endif
+ 
+ int main() {
+     ULONGLONG ll = 0x0123456789abcdef;
+     ll  +=         0x1010101010101010;
+     return !((ll>>32) ==0x11335577 && (ll & 0xffffffff) == 0x99bbddff);
+ }
+
+sizeof(int)=4 sizeof(long long)=8 を想定. 普通は intよりも幅広の整数リテラルを扱う場合はサフィックスで明示する.
+
+*** &aname(a34);  kr/extern_in_func.c
+
+関数中のextern 宣言が関数外に影響するか
+
+ int foo() {
+     extern char* baz;
+     return 0;
+ }
+ 
+ int main() {
+     char* p;
+     p = baz;
+     foo();
+     return p != 0;
+ }
+
+*** &aname(a35);  kr/oct0809.c
+
+8進数リテラルで 8・9が使えてしまうか
+
+ main() {
+     int i, j;
+     i = 008;
+     j = 009;
+     exit( j-i-1 );
+ }
+
+*** &aname(a36);  c90/sizeof_signed_char.c
+
+signed char のバイト数
+
+ int main() {
+     return sizeof(signed char);
+ }
+
+*** &aname(a37);  c90/sizeof_unsigned_char.c
+
+unsigned char のバイト数
+
+ int main() {
+     return sizeof(unsigned char);
+ }
+
+*** &aname(a38);  c90/sizeof_wide_ch.c
+
+L'C' のバイト数
+
+ int main() {
+     return sizeof L'C';
+ }
+
+*** &aname(a39);  c90/sizeof_is_unsigned.c
+
+sizeofした結果の値の型がunsignedか
+
+ int main() {
+     unsigned n;
+     /* It expects to be sizeof(size_t)==sizeof(uintptr_t)==sizeof(char*) */
+     n = sizeof(char*) * 8 - 1;
+     return !((sizeof(char) << n) > 0);
+ }
+
+*** &aname(a40);  c90/number_of_uint.c
+
+後ろに U を付けた整数リテラルが使えるか
+
+ int main() {
+     unsigned u;
+     u = 100u;
+     u += 10U;
+     return (int)(u * -0U);
+ }
+
+*** &aname(a41);  c90/number_of_long.c
+
+後ろに L を付けた整数リテラルが使えるか
+
+ int main() {
+     long l;
+     l = 100l;
+     l += 10L;
+     return (int)(l * -0L);
+ }
+
+*** &aname(a42);  c90/number_of_ulong.c
+
+後ろに UL を付けた整数リテラルが使えるか
+
+ int main() {
+     unsigned long ul;
+     ul = 100l;
+     ul += 10L;
+     return (int)(ul * -0L);
+ }
+
+*** &aname(a43);  c90/number_of_flt.c
+
+後ろに F を付けたfloatリテラルが使えるか
+
+ int main() {
+     float f;
+     f = 100.f;
+     f += 1E+02F;
+     return (int)(f * -0.f);
+ }
+
+*** &aname(a44);  c90/number_of_ldbl.c
+
+後ろに L を付けた long double リテラルが使えるか
+
+ int main() {
+     long double ld;
+     ld = 10000.0000000555l;
+     ld += 1E+20L;
+     return (int)(ld * -0.l);
+ }
+
+*** &aname(a45);  c90/macro_bsl_join.c
+
+&color(#0){ #行の末に \ を置いて次行を連結できるか };
+
+ #define MACRO_A     \
+         100
+ #if \
+     MACRO_A \
+     == 100
+ int rc = 0;
+ #else
+ int rc = 1;
+ #endif
+ 
+ int main() {
+     return rc;
+ }
+
+*** &aname(a46);  c90/macro_if.c
+
+&color(#0){ #if が使えるか };
+
+ #if 1
+ int a = 0;
+ #else
+ int a = 1;
+ #endif
+ int main() {
+     return a;
+ }
+
+*** &aname(a47);  c90/macro_elif.c
+
+&color(#0){ #elif が使えるか };
+
+ #if 0
+ int a = 1;
+ #elif 1
+ int a = 0;
+ #endif
+ 
+ int main() {
+     return a;
+ }
+
+*** &aname(a48);  c90/macro_defined.c
+
+&color(#0){ #ifで defined が使えるか };
+
+ #define LABEL1
+ #undef  LABEL2
+ #if defined(LABEL1) && !defined(LABEL2)
+ int a = 0;
+ #else
+ int a = 1;
+ #endif
+ int main() {
+     return a;
+ }
+
+*** &aname(a49);  c90/macro_pragma.c
+
+&color(#0){ #pragma が使えるか(未対応の指定でエラーにならないか) };
+
+ #pragma hoge
+ 
+ int main() {
+     return 0;
+ }
+
+*** &aname(a50);  c90/macro_to_str.c
+
+マクロで #による"文字列"リテラル化ができるか
+
+ #define MAC_TO_STR(x)   #x
+ 
+ int main() {
+     char* s;
+     s = MAC_TO_STR(Abcdefg);
+     return !(s[3] == 'd');
+ }
+
+*** &aname(a51);  c90/macro_cat.c
+
+マクロで ## による連結が行えるか
+
+ #define MACRO_0     0
+ #define MAC(n)      MACRO_##n
+ 
+ int main() {
+     return MAC(0);
+ }
+
+*** &aname(a52);  c90/macro_tok_cat.c
+
+トークン連結マクロが使えるか
+
+ #define MAC_TOK_CAT(a,b)    MAC_TOK_CAT2(a,b)
+ #define MAC_TOK_CAT2(a,b)   a##b
+ 
+ #define HOGE                hoge_
+ #define ABCD                abcd
+ #define hoge_abcd           hogeAbcd
+ 
+ int main() {
+     int hogeAbcd;
+     hogeAbcd = 0;
+     return MAC_TOK_CAT(HOGE, ABCD);
+ }
+
+*** &aname(a53);  c90/comment_to_spc.c
+
+/*コメント*/ が空白扱いになっているか
+
+ int main() {
+     int i,j;
+     i = 0;
+     j = -/*
+             comment
+         */-i;
+     return -j;
+ }
+
+c90(c89)以前は全く消え去るタイプがあり、トークン連結のテクニックになっていた(今は##を使う).
+
+*** &aname(a54);  c90/str_join.c
+
+隣接する "文字列リテラル" が連結するか
+
+ int main() {
+     const char* s;
+     s = "[" "hello" "woarld" "]";
+     return s[5] - s[7] + s[4] - s[10];
+ }
+
+*** &aname(a55);  c90/entry.c
+
+かって予約語だったentryがユーザ定義の名前として使えるか
+
+ int entry = 0;
+ 
+ int main() {
+     return entry;
+ }
+
+*** &aname(a56);  c90/enum.c
+
+enum が使えるか
+
+ enum {
+     A,
+     B,
+     C=0,
+     D
+ };
+ 
+ int main() {
+     return A + B + C - D;
+ }
+
+*** &aname(a57);  c90/func_arg_struct.c
+
+関数引数で構造体の値渡を使えるか.
+
+ typedef struct ST {
+     int x;
+     int y;
+ } ST;
+ 
+ int func(ST st) {
+     return st.x + st.y;
+ }
+ 
+ int main() {
+     ST st0 = { 11, -11 };
+     return func(st0);
+ }
+
+*** &aname(a58);  c90/func_arg_ppp.c
+
+可変引数指定 ... が使えるか
+
+ int func(int buf[], ...) {
+     return buf[0];
+ }
+ 
+ int main() {
+     int buf[3];
+     buf[0] = 0;
+     buf[1] = 1;
+     buf[2] = 2;
+     return func(buf, buf[0],buf[1], buf[2]);
+ }
+
+*** &aname(a59);  c90/func_ptr_call.c
+
+関数へのポインタを用いて単純な関数呼出が記述できるか
+
+ int func(int x, int y) {
+     return x + y;
+ }
+ 
+ int (*g_funcp)(int,int) = func;
+ 
+ int main() {
+     return g_funcp(12,-12);
+ }
+
+*** &aname(a60);  c90/plus.c
+
+単項 + が使えるか
+
+ int main() {
+     int a;
+     a = +1;
+     return -a + +a;
+ }
+
+*** &aname(a61);  c90/switch_long.c
+
+switch の分岐値として long 型が使えるか
+
+ long a = 5;
+ 
+ int main() {
+     switch (a) {
+     case 0: return 1;
+     case 5: return 0;
+     default: return -1;
+     }
+ }
+
+*** &aname(a62);  c90/struct_ini_comma.c
+
+struct 型の初期値で余分にカンマがあっても良いか.
+
+ struct ST {
+     int x, y, z;
+ };
+ struct ST st = { 0, 0, 0, };
+ 
+ int main() {
+     return st.z;
+ }
+
+*** &aname(a63);  c90/struct_copy.c
+
+構造体変数同士の代入が行えるか
+
+ struct ST {
+     int x, y;
+ } st = { 11, -11 };
+ 
+ int main() {
+     struct ST st0 = st;
+     struct ST st1;
+     st1 = st0;
+     return st1.x + st1.y;
+ }
+
+*** &aname(a64);  c90/struct_local_ini.c
+
+ローカル構造体変数の定義で初期値を記述できるか
+
+ struct ST {
+     int x, y;
+ };
+ 
+ int main() {
+     struct ST st = { 7, -7 };
+     return st.x + st.y;
+ }
+
+*** &aname(a65);  c90/struct_of_funcResult.c
+
+構造体値を関数の帰値にできるか
+
+ typedef struct ST {
+     int x, y;
+ } ST;
+ 
+ ST func(int x, int y) {
+     ST st;
+     st.x = x;
+     st.y = y;
+     return st;
+ }
+ 
+ int main() {
+     ST st;
+     st = func(13,-13);
+     return st.x + st.y;
+ }
+
+*** &aname(a66);  c90/union_ini.c
+
+共用体の初期化が行えるか
+
+ union {
+     double  dbl;
+     char*   p[2];
+ } uni =  { 0.0 };
+ 
+ union {
+     char*   p[2];
+     double  dbl;
+ } uni2 = { 0, 0 };
+ 
+ int main() {
+     return uni2.p[1] - uni2.p[0];
+ }
+
+*** &aname(a67);  c90/union_local_ini.c
+
+共用体のローカル変数の初期化が行えるか
+
+ union UNI1 {
+     double  dbl;
+     char*   p[2];
+ };
+ 
+ union UNI2 {
+     char*   p[2];
+     double  dbl;
+ };
+ 
+ int main() {
+     union UNI1 uni1 = { 0.0 };
+     union UNI2 uni2 = { 0, 0 };
+     return uni2.p[1] - uni2.p[0];
+ }
+
+*** &aname(a68);  c90/const_var.c
+
+const 変数定義できるか
+
+ char const* str = "hello";
+ 
+ int main() {
+     int const  a   = 20;
+     char const s[] = "hello";
+     return 0;
+ }
+
+*** &aname(a69);  c90/volatile_var.c
+
+volatile変数定義できるか
+
+ int volatile  val = 0;
+ char volatile str[] = "hello";
+ 
+ int main() {
+     int volatile  a;
+     a = 20;
+     return 0;
+ }
+
+*** &aname(a70);  c90/void_arg.c
+
+引数無関数宣言で引数に void 指定できるか
+
+ int main(void) {
+     return 0;
+ }
+
+*** &aname(a71);  c90/const_volatile_var.c
+
+const volatile 変数できるか
+
+ char const volatile str[] = "hello";
+ int const volatile  val   = 1;
+ 
+ int main() {
+     int const volatile a = 0;
+     return a * val;
+ }
+
+rom化がらみで使われることがあるらしい(よくしらず)
+
+*** &aname(a72);  c90/wide_char.c
+
+L'A'のようなワイド文字リテラルが使えるか
+
+ int main() {
+     int wc;
+     wc = L'A';
+     return 0;
+ }
+
+*** &aname(a73);  c90/wide_cstr.c
+
+L"str"のようなワイド文字列リテラルが使えるか
+
+ #define LS      L"Hello"
+ int main() {
+     return !(LS[0] == 'H' && LS[1] == 'e' && LS[2] == 'l' && LS[3] == 'l' && LS[4] == 'o');
+ }
+
+*** &aname(a74);  c90/wide_cstr_join.c
+
+隣接ワイド文字列リテラル同士の連結が行われるか
+
+ int main() {
+     return !(L"hello" L" " L"World" != 0);
+ }
+
+*** &aname(a76);  c99/sizeof_llong.c
+
+long long のバイト数
+
+ int main() {
+     return sizeof(long long);
+ }
+
+*** &aname(a77);  c99/sizeof_ullong.c
+
+unsigned long long のバイト数
+
+ int main() {
+     return sizeof(unsigned long long);
+ }
+
+*** &aname(a78);  c99/number_of_llong.c
+
+後ろに LL のついた整数リテラルが使えるか
+
+ int main() {
+     long long ll;
+     ll = 100000000ll;
+     ll += 1234567890LL;
+     ll *= -0LL;
+     return (int)ll;
+ }
+
+*** &aname(a79);  c99/number_of_ullong.c
+
+後ろに ULL のついた整数リテラルが使えるか
+
+ int main() {
+     unsigned long long ull;
+     ull = 100000000ull;
+     ull += 1234567890ULL;
+     ull *= -0ULL;
+     return (int)ull;
+ }
+
+*** &aname(a80);  c99/switch_llong.c
+
+switch で long long 値が使えるか
+
+ long long a = 0xFeFeFeFeFeFeFeFeLL;
+ 
+ int main() {
+     switch (a) {
+     case 0LL: return 1;
+     case 0xFeFeFeFeFeFeFeFeLL: return 0;
+     default: return -1;
+     }
+ }
+
+*** &aname(a81);  c99/enum_ini_comma.c
+
+enum 定義で最後に余分なカンマを置けるか
+
+ enum {
+     A,
+     B,
+     C,
+ };
+ 
+ int main() {
+     return A;
+ }
+
+*** &aname(a82);  c99/mod_minus.c
+
+負値のある%計算がc99の仕様になっているか
+
+ int ck(int a, int b, int modR) {
+     int d = a / b, r = a % b;
+     return (r == modR) && ((d * b + r) == a);
+ }
+ 
+ int main() {
+     return !( ck(-1,2,-1) && ck(1,-2,1) && ck(-999,4,-3) && ck(999,4,3) );
+ }
+
+今時のCPU用なら満たしている模様
+
+*** &aname(a83);  c99/m1div4294967295.c
+
+整数昇格の都合で -1/4294967295 の結果が 0(C99以降) か 1(以前)か
+
+ /* http://d.hatena.ne.jp/yupo5656/20070204/p1 */
+ #if  (defined(_MSC_VER) && _MSC_VER < 1300) || (defined(__BORLANDC__) && __BORLANDC__ < 0x570) || defined(__ORANGEC__)
+ typedef unsigned __int64    ULONGLONG;
+ #elif defined(LSI_C)
+ typedef unsigned long       ULONGLONG;
+ #else
+ typedef unsigned long long  ULONGLONG;
+ #endif
+ 
+ ULONGLONG fn(int n) {
+     return n / 4294967295;
+ }
+ 
+ int main() {
+     return (int)fn(-1);
+ }
+
+[[こちら>http://d.hatena.ne.jp/yupo5656/20070204/p1]] を参考に用意. LP64で負の割算がc99仕様でない場合結果は-1. 未定義動作の類らしい. もちろん避けたほうがよく.
+
+*** &aname(a84);  c99/struct_memb_array_0.c
+
+構造体メンバでサイズ 0 の配列を定義できるか
+
+ struct ST {
+     int   n;
+     char  a[0];
+ };
+ 
+ int main() {
+     return 0;
+ }
+
+*** &aname(a85);  c99/line_comment.c
+
+行コメント//が使えるか
+
+ // comment
+ int main() {
+     return 0;
+ }
+
+*** &aname(a86);  c99/line_comment_bsl_join.c
+
+行コメント//の末に\があったとき次行が連結されるか
+
+ // comment \
+     comment
+ 
+ int main() {
+     return 0;
+ }
+
+通常、しないおほうが良い. SJISでは次行を暗黙にコメント化してしまうことも.
+
+*** &aname(a87);  c99/macro_empty_arg1.c
+
+1引数マクロで引数が空の場合に対応しているか
+
+ #define M_1(x)      M_2(x)
+ #define M_2(x)      #x
+ #define X
+ 
+ int main() {
+     return !(M_1(X)[0] == 0);
+ }
+
+1引数マクロを引数無しで使った場合にエラーにするか否かはコンパイラによって対応が違う模様.
+
+*** &aname(a88);  c99/macro_empty_arg2.c
+
+2引数マクロで引数が空の場合に対応しているか
+
+ #define M_1(x)      M_2(x,1)
+ #define M_2(x,y)    #x
+ #define X
+ 
+ int main() {
+     return !(M_1(X)[0] == 0);
+ }
+
+ここ10年くらいのコンパイラなら対応している模様.
+
+*** &aname(a89);  c99/macro_va.c
+
+可変引数マクロを使えるか
+
+ #define MACRO_VA(a, ...)        a(__VA_ARGS__)
+ 
+ int add3(int x, int y, int z) {
+     return x + y + z;
+ }
+ 
+ int main() {
+     return MACRO_VA(add3, 100, -128, 28);
+ }
+
+*** &aname(a90);  c99/macro_va_2.c
+
+可変引数マクロから作った引数有マクロを使えるか
+
+ #define MACRO_VA(a, ...)        a(__VA_ARGS__)
+ #define ADD3(x,y,z)             ((x)+(y)+(z))
+ 
+ int main() {
+     return MACRO_VA(ADD3, 100, -128, 28);
+ }
+
+vc でエラーになったのでテストルーチンに.
+
+*** &aname(a91);  c99/__func__.c
+
+__func__ が使えるか
+
+ int main() {
+     const char* s = __func__;
+     return !(s[0] == 'm' && s[1] == 'a' && s[2] == 'i' && s[3] == 'n' && s[4] == '\0');
+ }
+
+関数名文字列をもつローカルstatic変数.
+
+*** &aname(a92);  c99/_Pragma.c
+
+_Pragma が使えるか
+
+ _Pragma("hoge")
+ int main() {
+     return 0;
+ }
+
+　#pragma の別表現. マクロでも使えるようにした状態.
+
+*** &aname(a93);  c99/inline_func.c
+
+関数の inline 指定が使えるか
+
+ static inline int ifunc(int x, int y, int z) {
+     return x + y + z;
+ }
+ 
+ int main() {
+     return ifunc(1000, -1024, 24);
+ }
+
+c++では普段どおり. 古いコンパイラでは __inline _inline __inline__ 等.
+
+*** &aname(a94);  c99/wide_cstr_join99.c
+
+ワイド文字列リテラルとそうでない文字列リテラルの連結が行えるか
+
+ int main() {
+     return !(L"hello" " " "World" != 0);
+ }
+
+*** &aname(a95);  c99/hexfloat.c
+
+16進数浮動小数点リテラルが使えるか
+
+ int main() {
+     double h = 0x12345678p0;
+     h = 0x1.2345678P-8;
+     h = 0x1.2345678P+100;
+     h = 0x0p0;
+     return h;
+ }
+
+*** &aname(a96);  c99/compound_literal.c
+
+(型名){...} による型値リテラルが使えるか
+
+ typedef struct ST {
+     int x, y;
+ } ST;
+ 
+ int main() {
+     ST st = (ST){ 108, 108 };
+     ST st2;
+     st2   = (ST){ 100, -100 };
+     return st.x * st2.x + st.y * st2.y;
+ }
+
+c++11では 型{...}
+
+*** &aname(a97);  c99/local_def_var.c
+
+(c++のように)文の後でもローカル変数定義できるか
+
+ int main() {
+     int a = 10;
+     a *= 5;
+     int b = a;
+     return b - a;
+ }
+
+c++では普段どおり.
+
+*** &aname(a98);  c99/for_def_var.c
+
+for の第一項でローカル変数定義できるか
+
+ int main() {
+     int n = 0;
+     for (int i = 0; i < 10; ++i)
+         n += i;
+     return n - 45;
+ }
+
+c++では普段どおり.
+
+*** &aname(a99);  c99/unicode_esc_char.c
+
+\u???? を文字列リテラル中に用いることができるか
+
+ #define US      L"\u306F\u308D\U000030FC"
+ int main() {
+     return !(US[0] == 0x306F && US[1] == 0x308D && US[2] == 0x30FC);
+ }
+
+*** &aname(a100);  c99/var_name_esc_unicode.c
+
+\u???? を用いて変数定義できるか
+
+ int main() {
+     int \u30C6\u30B9\u30C8;
+     \U000030C6\U000030B9\U000030C8 = 0;
+     return \u30C6\u30B9\u30C8;
+ }
+
+*** &aname(a102);  c11/dup_typedef.c
+
+同じtypedef定義を複数回行えるか
+
+ typedef int foo_t[2];
+ typedef int foo_t[2];
+ foo_t        foo;
+ 
+ int main() {
+     return foo[0];
+ }
+
+c++での仕様がc11で反映されたもの (c99ではredifineへの言及なさそうでc99コンパイラで未対応のものもあるので たぶん c11)
+
+*** &aname(a103);  c11/anonymous_struct_in_union.c
+
+union 定義中に 無名構造体を使えるか
+
+ union UNI {
+     int         typ;
+     void*       ptr;
+     struct {
+         unsigned short  x, y;
+     };
+ };
+ 
+ int main() {
+     union UNI uni;
+     uni.typ = 0;
+     uni.ptr = 0;
+     uni.x   = uni.y = 0;
+     return 0;
+ }
+
+*** &aname(a104);  c11/anonymous_union_in_struct.c
+
+struct 定義中に 無名共用体を使えるか
+
+ struct ST {
+     int         tag;
+     union {
+         double  dbl;
+         char    name[8];
+     };
+ };
+ 
+ int main() {
+     struct ST st;
+     st.tag = 0;
+     st.name[0] = 0;
+     st.dbl = 0.0;
+     return 0;
+ }
+
+*** &aname(a105);  c11/u8str.c
+
+u8"文字列" を使えるか
+
+ int main() {
+     char const* u8str = u8"Hello";
+     return 0;
+ }
+
+*** &aname(a106);  c11/u16str.c
+
+u"文字列" を使えるか
+
+ int main() {
+     return !(u"Hello" != 0);
+ }
+
+*** &aname(a107);  c11/u32str.c
+
+U"文字列" を使えるか
+
+ int main() {
+     return !(U"Hello" != 0);
+ }
+
+*** &aname(a109);  c90/wide_char_sjis.c
+
+SJISソースで L'字' が使えるか
+
+ int main() {
+     int wc;
+     wc = L'な';
+     wc = L'に' - wc;
+     return wc - 1;
+ }
+
+*** &aname(a110);  c90/wide_char_utf8.c
+
+UTF8ソースで L'字' が使えるか
+
+ int main() {
+     int wc;
+     wc = L'な';
+     wc = L'に' - wc;
+     return wc - 1;
+ }
+
+*** &aname(a111);  c90/wide_cstr_sjis.c
+
+SJISソースで L'字' L"文字列" が使えるか
+
+ #define LS      L"ハロー"
+ int main() {
+     return !(LS[0] == L'ハ' && LS[1] == L'ロ' && LS[2] == L'ー');
+ }
+
+*** &aname(a112);  c90/wide_cstr_utf8.c
+
+UTF8ソースで L'字' L"文字列" が使えるか
+
+ #define LS      L"ハロー"
+ int main() {
+     return !(LS[0] == L'ハ' && LS[1] == L'ロ' && LS[2] == L'ー');
+ }
+
+*** &aname(a113);  c99/line_comment_sjis.c
+
+SJISソースで 行末に0x5c(\)を含む文字を使って無問題か
+
+ int table0[] = {0,1,2,3};
+ int table[]  = {1,2,3,0};
+ // (SJIS未対応で行末に'\x5c'を含む全角文字があると次行コメント化) 適当な表
+ #define table   table0
+ 
+ int main() {
+     return table[0];
+ }
+
+未対応だと次行をコメント化し1文が実行されないバグに化ける. 全角使った//コメントの最後には半角文字を置くのが無難.
+
+*** &aname(a114);  c99/var_name_utf8.c
+
+UTF8ソースで 0x7fより大きい文字コードを名前に使えるか
+
+ int main() {
+     int テスト;
+     テスト = 0;
+     return テスト;
+ }
+
+*** &aname(a115);  c99/var_name_sjis.c
+
+SJISソースで 0x7fより大きい文字コードを名前に使えるか
+
+ int main() {
+     int テスト;
+     テスト = 0;
+     return テスト;
+ }
+
+*** &aname(a116);  c99/macro_name_utf8.c
+
+UTF8ソースで 0x7fより大きい文字コードをマクロ名に使えるか
+
+ #define テスト	  0
+ 
+ int main() {
+     return テスト;
+ }
+
+*** &aname(a117);  c99/macro_name_sjis.c
+
+SJISソースで 0x7fより大きい文字コードをマクロ名に使えるか
+
+ #define テスト      0
+ 
+ int main() {
+     return テスト;
+ }
+
+*** &aname(a118);  c++/void_main_return_0.c
+
+void main で暗黙に 0を返すか
+
+ void main() {
+     int rc = 1;
+ }
+
+　gcc clang あたりはc++でコンパイルしても void main をエラーにするようなので使用しないほうが無難.
+
+*** &aname(a119);  vc/sizeof_m128.c
+
+__m128 のバイト数
+
+ #include <xmmintrin.h>
+ int main() {
+     return sizeof(__m128);
+ }
+
+SSE (相当) がある場合のみ可.
+
+*** &aname(a120);  vc/__restrict.c
+
+__restrict が使えるか
+
+ void func(char * __restrict dst, char const * __restrict src, unsigned n) {
+     unsigned i;
+     for (i = 0; i < n; ++i)
+         dst[i] = src[i];
+ }
+ 
+ int main() {
+     char    buf[32];
+     func(buf, "hello", 6);
+     return !(buf[3] == 'l');
+ }
+
+c99 の restrict 相当
+
+*** &aname(a121);  gcc/__FUNCTION__.c
+
+__FUNCTION__ が使えるか
+
+ int main() {
+     const char* s = __FUNCTION__;
+     return !(s[0] == 'm' && s[1] == 'a' && s[2] == 'i' && s[3] == 'n' && s[4] == '\0');
+ }
+
+c99 の __func__ 相当
+
+*** &aname(a122);  vc/__COUNTER__.c
+
+__COUNTER__ マクロが使えるか
+
+ int main() {
+     int n  = __COUNTER__;
+     int n2 = __COUNTER__;
+     return n2 - n - 1;
+ }
+
+使うたびに値を1カウントアップするマクロ(名).
+
+*** &aname(a123);  vc/pragma_once.c
+
+&color(#0){ #pragma once が使えるか };
+
+[vc/pragma_once.h]
+ #pragma once
+ #ifndef HOGE
+ #define HOGE    1234
+ #else
+ #undef  HOGE
+ #define HOGE    9765
+ #endif
+
+[vc/pragma_once.c]
+ #include "pragma_once.h"
+ #include "pragma_once.h"
+ 
+ int main() {
+     return HOGE - 1234;
+ }
+
+同一ファイルの#includeを１度きりにする.
+
+*** &aname(a124);  vc/sizeof_int64.c
+
+__int64 のバイト数
+
+ int main() {
+     return sizeof(__int64);
+ }
+
+64bit符号付整数型. c99 の long long がない場合の代用品.
+
+*** &aname(a125);  vc/sizeof_unsigned_int64.c
+
+unsigned __int64 のバイト数
+
+ int main() {
+     return sizeof(unsigned __int64);
+ }
+
+64bit符号無整数型. c99 の unsigned long long がない場合の代用品.
+
+*** &aname(a126);  vc/__cdecl.c
+
+__cdecl が使えるか
+
+ int __cdecl func(int n) { return n; }
+ 
+ int main() {
+ 	return func(0);
+ }
+
+一般的な C引数指定
+
+*** &aname(a127);  vc/__stdcall.c
+
+__stdcall が使えるか
+
+ int __stdcall func(int n) { return n; }
+ 
+ int main() {
+ 	return func(0);
+ }
+
+旧pascal 指定
+
+*** &aname(a128);  vc/__fastcall.c
+
+__fastcall が使えるか
+
+ int __fastcall func(int n) { return n; }
+ 
+ int main() {
+ 	return func(0);
+ }
+
+レジスタ渡指定
+
+*** &aname(a129);  vc/__forceinline.c
+
+__forceinline が使えるか
+
+ __forceinline int ifunc(int x, int y, int z) {
+     return x + y + z;
+ }
+ 
+ int main() {
+     return ifunc(1000, -1024, 24);
+ }
+
+強制 inline 指定
+
+*** &aname(a130);  vc/declspec_noinline.c
+
+__declspec(noinline) が使えるか
+
+ __declspec(noinline) int func() {
+     return 0;
+ }
+ 
+ int main() {
+     return func();
+ }
+
+inline 禁止
+
+*** &aname(a131);  vc/declspec_selectany.c
+
+__declspec(selectany) が使えるか
+
+ __declspec(selectany) int g_var = 1;
+ 
+ int main() {
+     return g_var - 1;
+ }
+
+複数定義されてもリンク時に１つだけ実体化. gccの __attribute__( (weak) ) 相当(と思う).
+
+*** &aname(a132);  vc/declspec_align.c
+
+__declspec(align(N)) が使えるか
+
+ #if defined(_WIN64) || defined(CPU64)
+ typedef unsigned long long  UINTE;
+ #else
+ typedef unsigned UINTE;
+ #endif
+ 
+ __declspec(align(16)) char a[64];
+ 
+ int main() {
+     return ((UINTE)a) & 0x0f;
+ }
+
+c11 の _Align(N) 相当
+
+*** &aname(a133);  vc/declspec_noreturn.c
+
+__declspec(noreturn) が使えるか
+
+ #ifdef __cplusplus
+ #include <stdlib.h>
+ #endif
+ __declspec(noreturn) void e() { exit(0); }
+ 
+ int main() {
+     e();
+     return 1;
+ }
+
+c11 の _Noreturn 相当
+
+*** &aname(a134);  vc/declspec_thread.c
+
+declspec(thread) が使えるか
+
+ __declspec(thread) int tls_var;
+ 
+ int main() {
+     tls_var = 0;
+     return tls_var;
+ }
+
+c11 の _Thread_local 相当
+
+*** &aname(a135);  vc/declspec_dllimport.c
+
+__declspec(dllimport) を使えるか(コンパイルのみ)
+
+ __declspec(dllimport) void import_func(int x);
+
+windows dll api 宣言
+
+*** &aname(a136);  vc/declspec_dllexport.c
+
+__declspec(dllexport) を使えるか(コンパイルのみ)
+
+ __declspec(dllexport) int import_func(int x);
+ int import_func(int x) {
+     return x * x;
+ }
+
+windows dll api 定義
+
+*** &aname(a137);  vc/include_intrin.c
+
+　#include <intrin.h> できるか
+
+ #include <intrin.h>
+ #include <stdio.h>
+ int main() {
+     printf("#include <intrin.h>\n");  /* write to _intrin.h */
+     return 0;
+ }
+
+intrin.h は vcの組込関数の宣言がひととおりあるヘッダで、組込関数を使う場合にはincludeする必要がある. このテストの結果で_intrin.hヘッダを作り他のvc組込関数を使うテストではそれをincludeしている.
+
+*** &aname(a138);  vc/_InterLockedIncrement.c
+
+_InterLockedIncrement/_InterLockedDecrementが使えるか
+
+ #include "_intrin.h"    /* #include <intrin.h> */
+ long    g_count = 0;
+ 
+ int main() {
+     _InterlockedIncrement(&g_count);
+     _InterlockedDecrement(&g_count);
+     return g_count;
+ }
+
+atomic なインクリメント/デクリメント
+
+*** &aname(a139);  vc/_InterLockedExchange.c
+
+_InterLockedExchange が使えるか
+
+ #include "_intrin.h"    /* #include <intrin.h> */
+ long g_val=0;
+ 
+ int main() {
+     if (_InterlockedExchange(&g_val, 1) != 0)
+         return 1;
+     return g_val - 1;
+ }
+
+atomic な 比較＆設定
+
+*** &aname(a140);  vc/_ReadWriteBarrier.c
+
+_ReadWriteBarrier が使えるか
+
+ #include "_intrin.h"    /* #include <intrin.h> */
+ volatile int g_var = 0;
+ 
+ int main() {
+     int c;
+     c = g_var;
+     _ReadWriteBarrier();
+     g_var = 1;
+     _WriteBarrier();
+     c = g_var;
+     _ReadBarrier();
+     return c - 1;
+ }
+
+メモリバリア関係. vcではx64は可でx86は不可.
+
+*** &aname(a141);  vc/_ByteSwap.c
+
+_ByteSwap_???? が使えるか
+
+ #include "_intrin.h"    /* #include <intrin.h> */
+ 
+ int main() {
+     return !(  _byteswap_ushort(0x3412)==0x1234
+             && _byteswap_ulong(0x78563412)==0x12345678
+             && _byteswap_uint64(0xf0debc9a78563412ll) == 0x123456789abcdef0ll );
+ }
+
+整数値のバイト並びを逆順にする.
+
+*** &aname(a142);  vc/_BitScan.c
+
+_BitScanForward/_BitScanReverseが使えるか
+
+ #include "_intrin.h"    /* #include <intrin.h> */
+ 
+ int main() {
+     unsigned long       r = 0;
+     if (_BitScanForward(&r, 0x40000000) == 0 || r != 30) return 1;
+     if (_BitScanForward(&r, 0x00000004) == 0 || r !=  2) return 1;
+     if (_BitScanReverse(&r, 0x40000000) == 0 || r != 30) return 1;
+     if (_BitScanReverse(&r, 0x00000004) == 0 || r !=  2) return 1;
+     return 0;
+ }
+
+ビットカウント関係.
+
+*** &aname(a143);  vc/_BitScan64.c
+
+_BitScanForward64/_BitScanReverse64が使えるか
+
+ #include "_intrin.h"    /* #include <intrin.h> */
+ 
+ int main() {
+     unsigned long       r = 0;
+     if (_BitScanForward64(&r, 0x4000000000000000) == 0 || r != 62) return 1;
+     if (_BitScanForward64(&r, 0x0000000000000004) == 0 || r !=  2) return 1;
+     if (_BitScanReverse64(&r, 0x4000000000000000) == 0 || r != 62) return 1;
+     if (_BitScanReverse64(&r, 0x0000000000000004) == 0 || r !=  2) return 1;
+     return 0;
+ }
+
+ビットカウント関係. vcでは x64のみ可. x86 は不可.
+
+*** &aname(a144);  vc/__FUNCSIG__.c
+
+__FUNCSIG__ (関数定義文字列)マクロが使えるか
+
+ int main() {
+     const char* s = __FUNCSIG__;
+     return 0;
+ }
+
+関数定義文字列. gccの __PRETTY_FUNCTION__ 相当.
+
+*** &aname(a145);  vc/__FUNCDNAME__.c
+
+__FUNCDNAME__ (マングル名文字列)マクロが使えるか
+
+ int main() {
+     const char* s = __FUNCDNAME__;
+     return !(s && s[0] != '\0');
+ }
+
+*** &aname(a146);  vc/__pragma.c
+
+__pragma が使えるか
+
+ __pragma("hoge")
+ int main() {
+     return 0;
+ }
+
+C99の _Pragma 相当
+
+*** &aname(a147);  gcc/sizeof_int128.c
+
+__int128 のバイト数
+
+ int main() {
+     return sizeof(__int128);
+ }
+
+今のところ対応していても64bitコンパイラのみ(32bitコンパイラにおける __int64 と同様)
+
+*** &aname(a148);  gcc/switch_i128.c
+
+unsigned __int128 変数で switch が行えるか
+
+ unsigned __int128 a = 0x123456789ABCDEF0123456789ABCDEF0;
+ 
+ int main() {
+     switch (a) {
+     case 0: return 1;
+     case 0x123456789ABCDEF0123456789ABCDEF0: return 0;
+     default: return -1;
+     }
+ }
+
+*** &aname(a149);  gcc/binary_literal.c
+
+２進数リテラル 0b???? が使えるか
+
+ int main() {
+     return 0b10101100 - 0xac;
+ }
+
+c++14で組み込まれる予定らしい.
+
+*** &aname(a150);  gcc/attribute_alias.c
+
+__attribute__( (alias("name")) ) が使えるか
+
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+ 
+ int a() { return 0; }
+ __attribute__((alias("a"))) int b();
+ 
+ #ifdef __cplusplus
+ }
+ #endif
+ 
+ int main() {
+     return b();
+ }
+
+リンク時名の別名設定.
+
+*** &aname(a151);  gcc/attribute_always_inline.c
+
+__attribute__( (always_inline) ) が使えるか
+
+ __attribute__((always_inline)) int ifunc(int x, int y, int z) {
+     return x + y + z;
+ }
+ 
+ int main() {
+     return ifunc(1000, -1024, 24);
+ }
+
+強制 inline
+
+*** &aname(a152);  gcc/attribute_noinline.c
+
+__attribute__( (noinline) ) が使えるか
+
+ __attribute__((noinline)) int func() {
+     return 0;
+ }
+ 
+ int main() {
+     return func();
+ }
+
+inline 禁止
+
+*** &aname(a153);  gcc/attribute_selectany.c
+
+__attribute__( (selectany) ) が使えるか
+
+ __attribute__((selectany)) int g_var = 1;
+ 
+ int main() {
+     return g_var - 1;
+ }
+
+複数定義されてもリンク時に１つだけ実体化. vcの __declspec(selectany) 相当(と思う).
+
+*** &aname(a154);  gcc/attribute_weak.c
+
+__attribute__( (weak) ) が使えるか
+
+ __attribute__((weak)) int g_var = 1;
+ 
+ int main() {
+     return g_var - 1;
+ }
+
+複数定義されてもリンク時に１つだけ実体化. vcの __declspec(selectany) 相当(と思う).
+
+*** &aname(a155);  gcc/attribute_aligned.c
+
+__attribute__( (aligned(N)) ) が使えるか
+
+ #if defined(_WIN64) || defined(CPU64) || defined(__amd64__)
+ typedef unsigned long long  UINTE;
+ #else
+ typedef unsigned UINTE;
+ #endif
+ 
+ __attribute__((aligned(16))) char a[64];
+ 
+ int main() {
+     return ((UINTE)a) & 0x0f;
+ }
+
+c11 の _Align(N) 相当
+
+*** &aname(a156);  gcc/attribute_noreturn.c
+
+__attribute__( (noreturn) ) が使えるか
+
+ #ifdef __cplusplus
+ #include <stdlib.h>
+ #endif
+ __attribute__((noreturn)) void e() { exit(0); }
+ 
+ int main() {
+     e();
+     return 1;
+ }
+
+c11 の _Noreturn 相当
+
+*** &aname(a157);  gcc/__thread_var.c
+
+__thread 変数定義ができるか
+
+ __thread int tls_var;
+ 
+ int main() {
+     tls_var = 0;
+     return tls_var;
+ }
+
+c11 の _Thread_local 相当
+
+*** &aname(a158);  gcc/__sync_add_and_fetch.c
+
+__sync_add_and_fetch が使えるか
+
+ int     g_count = 0;
+ 
+ int main() {
+     __sync_add_and_fetch(&g_count, 1);
+     __sync_sub_and_fetch(&g_count, 1);
+     return g_count;
+ }
+
+atomic な加算/減算
+
+*** &aname(a159);  gcc/__sync_val_compare_and_swap.c
+
+__sync_val_compare_and_swap が使えるか
+
+ int g_val=0;
+ 
+ int main() {
+     if (__sync_val_compare_and_swap(&g_val, 0, 1) != 0)
+         return 1;
+     return g_val - 1;
+ }
+
+atomic な比較＆交換
+
+*** &aname(a160);  gcc/__builtin_bswap16.c
+
+__builtin_bswap16 が使えるか
+
+ int main() {
+     return !(  __builtin_bswap16(0x3412)==0x1234 );
+ }
+
+16ビット整数のバイト並びを逆順にする
+
+*** &aname(a161);  gcc/__builtin_bswap3264.c
+
+__builtin_bswap32 __builtin_bswap64 が使えるか
+
+ int main() {
+     return !(  __builtin_bswap32(0x78563412)==0x12345678
+             && __builtin_bswap64(0xf0debc9a78563412ll) == 0x123456789abcdef0ll );
+ }
+
+32/64ビット整数のバイト並びを逆順にする
+
+*** &aname(a162);  gcc/__builtin_clz.c
+
+__builtin_clz/__builtin_tlz/__builtin_popcount が使えるか
+
+ int main() {
+     return !( __builtin_popcount(0xCCCCCCCC) == 16
+            && __builtin_clz(0x00000003) == 30
+            && __builtin_ctz(0x40000000) == 30 );
+ }
+ 
+
+int(32ビット値)でのビットカウント関係
+
+*** &aname(a163);  gcc/__builtin_clzll.c
+
+__builtin_clzll/__builtin_tlzll/__builtin_popcountll が使えるか
+
+ int main() {
+     return !( __builtin_popcountll(0xCCCCCCCCCCCCCCCCll) == 32
+            && __builtin_clzll(0x0000000000000003ll) == 62
+            && __builtin_ctzll(0x4000000000000000ll) == 62 );
+ }
+
+long long(64ビット値)でのビットカウント関係
+
+*** &aname(a164);  gcc/__PRETTY_FUNCTION__.c
+
+__PRETTY_FUNCTION__ が使えるか
+
+ int main() {
+     const char* s = __PRETTY_FUNCTION__;
+     return 0;
+ }
+
+関数定義文字列. vcの __FUNCSIG__ 相当
+
+*** &aname(a165);  gcc/include_next.c
+
+&color(#0){ #include_next が使えるか };
+
+ #include_next <stdlib.h>
+ 
+ int main() {
+ 	exit(0);
+ 	return 1;
+ }
+
+　#include でヘッダ読込後、includeパスでそれよりも後ろにある同名ファイルをinclude
+
+*** &aname(a166);  c/sizeof_ch.c
+
+'C' のバイト数
+
+ int main() {
+     return sizeof 'C';
+ }
+
+c++では char型扱いで 1、cでは整数昇格でintになってsizeof(int)=4 (8|16bit-cpuでは2)
+
+*** &aname(a167);  kr/old_style_func.c
+
+旧仕様の関数定義ができるか
+
+ char* mem_p_cpy(d,s,n)
+     char* d;
+     char* s;
+ {
+     char* e;
+     e = d + n;
+     while (d < e)
+         *d++ = *s++;
+     return d;
+ }
+ 
+ main() {
+     char    buf[99];
+     char*   p;
+     p = mem_p_cpy(buf, "hello", 6);
+     exit( !(p == buf+6) );
+ }
+
+*** &aname(a168);  kr/ref_register.c
+
+register 変数のアドレスを取れるか
+
+ int main() {
+     register int reg;
+     int*    r = &reg;
+     reg = 0;
+     return *r;
+ }
+
+c++では register 無視のでアドレスとれるが c90ではアドレスが取れない.
+
+*** &aname(a169);  c/default_type.c
+
+型省略でint定義ができるか
+
+ const func() {
+     return 1;
+ }
+ 
+ main() {
+     const c = 1;
+     return func() - c;
+ }
+
+cでも c99以降は省略できない.
+
+*** &aname(a170);  c/multi_def_var.c
+
+同一グローバル変数を複数回定義できるか
+
+ int g;
+ int g;
+ 
+ int main() {
+     return g;
+ }
+
+c は複数回指定できるが c++ はできない.
+
+*** &aname(a171);  c/auto.c
+
+C言語としての auto 指定ができるか
+
+ int main() {
+     auto int i;
+     i = 0;
+     return i;
+ }
+
+c++11 以降だと auto の用法がかわったので旧記法はエラーになることもある(vc11はエラーだが gcc clang は可)
+
+*** &aname(a172);  c/struct3.c
+
+struct S{} と typedef struct{} S が別物として定義できるか
+
+ typedef struct { int x, y; } ST;
+ struct ST { short a, b; };
+ 
+ ST        st1 = { 1, -1 };
+ struct ST st2 = { -10, 10};
+ 
+ int main() {
+     return  st1.x + st1.y + st2.a + st2.b ;
+ }
+
+c++ だとエラー. cだと使える. 通常、バグの元になりやすいのでしないほうがよい.
+
+*** &aname(a173);  c/struct4.c
+
+関数内の struct a 定義がグローバル変数 a を隠さないか
+
+ char a[1];
+ int main() {
+     struct a { char ary[16]; };
+     return sizeof(a) - 1;
+ }
+
+c++ だと隠す状態. 通常、こんな状況をつくるべきでない.
+
+*** &aname(a174);  c/struct_struct.c
+
+構造体Aの中で定義された構造体Bを外部で直接利用できるか
+
+ struct A {
+     int a;
+     struct B {
+         int b;
+     } st_b;
+ };
+ 
+ struct B g_b;
+ 
+ int main() {
+     return g_b.b;
+ }
+
+c++ だと出来ない. 通常、中の定義を流用しない. するなら最初から外に定義.
+
+*** &aname(a175);  c/recersive_main.c
+
+main()を再帰呼び出しできるか
+
+ int main(int argc, char* argv[]) {
+     if (argc > 0)
+         return main(argc-1,argv);
+     return 0;
+ }
+
+c++ では出来なくてよい.（だけどできる方が多そう)
+
+*** &aname(a176);  c/sizeof_comma_op.c
+
+char a[9]; sizeof( (char)0，a ) が 左辺値(9)か 右辺値( sizeof(char*) )か
+
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ int main() {
+     char a[9];
+     if (sizeof((char)0,a) == 9) {
+         printf("c/sizeof_comma_op.c , lvalue\n");
+         return 0;
+     } else if (sizeof((char)0,a) == sizeof(char*)) {
+         printf("c/sizeof_comma_op.c , rvalue\n");
+         return 0;
+     } else {
+         /*printf("fail[e]\n");*/
+         return 1;
+     }
+ }
+
+通常 c は右辺値(rvalue)、c++ は左辺値(lvalue)になる. 普段こんな記述をすることはまずないだろう.
+
+*** &aname(a177);  c90/void_ptr.c
+
+void* から他の型のポインタへキャスト無しで代入できるか
+
+ void bar() {
+ }
+ 
+ void* foo() {
+     bar();
+     return 0;
+ }
+ 
+ int main() {
+     void* p;
+     char* q;
+     p = foo();
+     q = p;
+     return !(q == p);
+ }
+
+c++ ではできない. キャスト必須.
+
+*** &aname(a178);  c90/const_var_unini.c
+
+初期値指定無しの const 変数を使えるか
+
+ const int ci;
+ int main() {
+     return ci;
+ }
+
+c++ ではできない.
+
+*** &aname(a179);  c90/char_array_no_null.c
+
+char a[N] を '\0'無で丁度長さNの文字列リテラルで初期化できるか
+
+ char charArray[12] = "hello world!";
+ char char_dummy    = '\0';
+ 
+ int main() {
+     return !(charArray[11] == '!');
+ }
+
+c++ ではできない.
+
+*** &aname(a180);  c90/ref_array.c
+
+配列名のみに対して & をつけてアドレスが取得できるか
+
+ int main() {
+     char    buf[10];
+     char*   r;
+     r       = &buf;
+     return !(r == buf);
+ }
+
+c++ ではできない.
+
+*** &aname(a181);  c90/enum_var_set.c
+
+enum 変数に直接整数値を設定できるか
+
+ enum E { A, B };
+ int main() {
+     enum E  e;
+     e = 1;
+     return e - e;
+ }
+
+c++ ではキャスト必須.
+
+*** &aname(a182);  c90/struct_def_func_ret.c
+
+関数定義の返型で構造体定義できるか
+
+ struct XY { short x, y; } func(int x, int y) {
+     struct XY xy;
+     xy.x = x;
+     xy.y = y;
+     return xy;
+ }
+ 
+ int main() {
+     struct XY xy;
+     xy = func(3, -3);
+     return xy.x + xy.y;
+ }
+
+c++ ではできない.
+
+*** &aname(a183);  c90/struct_def_func_arg.c
+
+関数定義の引数で構造体定義できるか
+
+ void func(int x, int y, struct XY { int x, y; }* xy) {
+     xy->x = x;
+     xy->y = y;
+ }
+ 
+ int main() {
+     struct XY { int x, y; } xy;
+     func(3, -3, &xy);
+     return xy.x + xy.y;
+ }
+
+c++ ではできない.
+
+*** &aname(a184);  c99/__STDC_VERSION__.c
+
+__STDC_VERSION__ が定義されているか。あればその値
+
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_VERSION__
+     printf("c99/__STDC_VERSION__.c, %s\n", M_TO_S(__STDC_VERSION__));
+  #else
+     printf("c99/__STDC_VERSION__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+c99で定義され c99や c11の制定年月を値に持つが、コンパイラによってはモード違いで c90 c95 の制定年月を設定するモノもある.
+
+*** &aname(a185);  c99/__STDC_ISO_10646__.c
+
+__STDC_ISO_10646__ が定義されているか。あればその値
+
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_ISO_10646__
+     printf("c99/__STDC_ISO_10646__.c, %s\n", M_TO_S(__STDC_ISO_10646__));
+  #else
+     printf("c99/__STDC_ISO_10646__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+wchar_t が UNICODE(ISO 10646) に準拠していれば定義.
+
+*** &aname(a186);  c99/__STDC_IEC_559__.c
+
+__STDC_IEC_559__ が定義されているか。
+
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_IEC_559__
+     printf("c99/__STDC_IEC_559__.c, %s\n", M_TO_S(__STDC_IEC_559__));
+  #else
+     printf("c99/__STDC_IEC_559__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+IEC 60559浮動小数点仕様に準拠していれば定義.
+
+*** &aname(a187);  c99/__STDC_IEC_559_COMPLEX__.c
+
+__STDC_IEC_559_COMPLEX__ が定義されているか。
+
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_IEC_559_COMPLEX__
+     printf("c99/__STDC_IEC_559_COMPLEX__.c, %s\n", M_TO_S(__STDC_IEC_559_COMPLEX__));
+  #else
+     printf("c99/__STDC_IEC_559_COMPLEX__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+IEC 60559 の複素数仕様に準拠していれば定義(_Imaginary がない場合 _Complexがあっても未定義)
+
+*** &aname(a188);  c99/__STDC_MB_MIGHT_NEQ_WC__.c
+
+__STDC_MB_MIGHT_NEQ_WC__ が定義されているか。
+
+ #include <wchar.h>
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_MB_MIGHT_NEQ_WC__
+     printf("c99/__STDC_MB_MIGHT_NEQ_WC__.c, %s\n", M_TO_S(__STDC_MB_MIGHT_NEQ_WC__));
+  #else
+     printf("c99/__STDC_MB_MIGHT_NEQ_WC__.c , no support\n");
+  #endif
+     return 0;
+ }
+ 
+
+未定義時は 文字リテラルの範囲で 'C'==L'C' が成り立つことが期待できるが、定義時は 'C'!=L'C'があり得る状態. (char EBCDIC / wchar_t UNICODE のような場合だろうか)
+
+*** &aname(a189);  c99/sizeof_Bool.c
+
+_Bool のバイト数
+
+ int main() {
+     return sizeof(_Bool);
+ }
+
+c++ だと bool.
+
+*** &aname(a190);  c99/sizeof_float_Complex.c
+
+float _Complex のバイト数
+
+ int main() {
+     return sizeof(float _Complex);
+ }
+
+c++ だと std::complex<float> . c++11 からバイナリ互換.
+
+*** &aname(a191);  c99/sizeof_double_Complex.c
+
+double _Complex のバイト数
+
+ int main() {
+     return sizeof(double _Complex);
+ }
+
+c++ だと std::complex<double> . c++11 からバイナリ互換.
+
+*** &aname(a192);  c99/sizeof_long_double_Complex.c
+
+long double _Complex のバイト数
+
+ int main() {
+     return sizeof(long double _Complex);
+ }
+
+c++ だと std::complex<long double> . c++11 からバイナリ互換.
+
+*** &aname(a193);  c99/sizeof_float_Imaginary.c
+
+float _Imaginary のバイト数
+
+ int main() {
+     return sizeof(float _Imaginary);
+ }
+
+c99対応コンパイラでも未サポートの場合あり(gccやclang)
+
+*** &aname(a194);  c99/sizeof_double_Imaginary.c
+
+double _Imaginary のバイト数
+
+ int main() {
+     return sizeof(double _Imaginary);
+ }
+
+c99対応コンパイラでも未サポートの場合あり(gccやclang)
+
+*** &aname(a195);  c99/sizeof_long_double_Imaginary.c
+
+long double _Imaginary のバイト数
+
+ int main() {
+     return sizeof(long double _Imaginary);
+ }
+
+c99対応コンパイラでも未サポートの場合あり(gccやclang)
+
+*** &aname(a196);  c99/designated_ini.c
+
+構造体の初期化でメンバー名による初期化が行えるか
+
+ struct {
+     int     x;
+     int     y;
+     int     z;
+     int     w;
+ } st = {
+     .y = 100,
+     .z = -5
+ };
+ 
+ int main() {
+     return st.x + st.y + st.z + st.w - 95;
+ }
+
+*** &aname(a197);  c99/array_ini.c
+
+配列の初期化で添字番号による部分初期化が行えるか
+
+ int a[5] = {
+     [1] = 10,
+     [3] = 255,
+ };
+ 
+ int main() {
+     return !(a[0] == 0 && a[1] == 10 && a[2] == 0 && a[3] == 255 && a[4] == 0);
+ }
+
+*** &aname(a198);  c99/compound_literal_arg.c
+
+(型名){...} へのポインタを関数引数でつかえるか
+
+ typedef struct ST {
+     int x, y;
+ } ST;
+ 
+ ST add(ST const a, ST const* b) {
+     ST r = a;
+     r.x += b->x;
+     r.y += b->y;
+     return r;
+ }
+ 
+ int main() {
+     ST st = (ST){ 108, -108 };
+     st = add(st, &(ST){-100, 100});
+     return st.x + st.y;
+ }
+
+c++11 からは 型名{..} があるが 関数引数での一時オブジェクトのアドレスを取れないので不可のよう. const&なら可.（型がconstexpr対応してたらポインタでも可能性有？無？ 未調査)
+
+*** &aname(a199);  c99/variable_length_array.c
+
+可変長(実行時サイズ指定)(ローカル)配列変数が使えるか
+
+ void func(int n) {
+     char buf[n];
+ }
+ 
+ int main() {
+     func(1000);
+     return 0;
+ }
+
+alloca(n) を文法化したものとも. c++14で対応予定らしい(ただしsizeofやtypedefは未対応)
+
+*** &aname(a200);  c99/variable_length_array_sizeof.c
+
+可変長配列のsizeofが使えるか
+
+ int func(int n) {
+     int buf[n];
+     return sizeof(buf) == sizeof(int) * n;
+ }
+ 
+ int main() {
+     return !func(1000);
+ }
+
+c++ 不可
+
+*** &aname(a201);  c99/variable_length_array_typedef.c
+
+可変長配列のtypedefが使えるか
+
+ int func(int n) {
+     typedef int buf_t[n];
+     int         l = sizeof(buf_t);
+     n += 10;
+     buf_t       buf;
+     return sizeof(buf) == l;
+ }
+ 
+ int main() {
+     return !func(100);
+ }
+
+c++ 不可
+
+*** &aname(a202);  c99/variable_length_array_funcarg.c
+
+関数引数で可変長配列が使えるか
+
+ void func(int w, int h, char m[h][w]) {
+     int x,y;
+     for (y = 0; y < h; ++y) {
+         for (x = 0; x < w; ++x)
+             m[h-1-y][w-1-x] = y * w + x;
+     }
+ }
+ 
+ int main() {
+     char    m[25][80];
+     func(80, 25, m);
+     return m[24][79];
+ }
+
+c++ 不可
+
+*** &aname(a203);  c99/variable_length_array_funcarg2.c
+
+関数引数で可変長配列が使えるか(サイズ後置)
+
+ void func(char m[*][*], int w, int h);
+ 
+ void func(m, w, h)
+     int w, h;
+     char m[h][w];
+ {
+     int x,y;
+     for (y = 0; y < h; ++y) {
+         for (x = 0; x < w; ++x)
+             m[h-1-y][w-1-x] = y * w + x;
+     }
+ }
+ 
+ int main() {
+     char    m[25][80];
+     func(m, 80, 25);
+     return m[24][79];
+ }
+
+c++ 不可
+
+*** &aname(a204);  c99/restrict_ptr.c
+
+restrict ポインタが使えるか
+
+ void func(char * restrict dst, char const * restrict src, unsigned n) {
+     unsigned i;
+     for (i = 0; i < n; ++i)
+         dst[i] = src[i];
+ }
+ 
+ int main() {
+     char    buf[32];
+     func(buf, "hello", 6);
+     return !(buf[3] == 'l');
+ }
+
+restrict がないのでc++不可. しかしメーカー拡張で __restrict のようなものが用意されていることはある.
+
+*** &aname(a205);  c99/array_type_qualifiers.c
+
+関数引数の配列の定義で[cv修飾]が使えるか
+
+ void func1(char a[const]) {}
+ void func2(char a[volatile]) {}
+ void func3(char a[static 1000]) {}
+ #ifndef __cplusplus
+ void func4(char a[restrict], char b[restrict]) {}
+ #endif
+ 
+ int main() {
+     char    buf[1024], buf2[1024];
+     func1(buf);
+     func2(buf);
+     func3(buf);
+   #ifndef __cplusplus
+     func4(buf, buf2);
+   #endif
+     return 0;
+ }
+
+(c++での扱いをよくわかったおらず)
+
+*** &aname(a206);  c99/c99namescope.c
+
+{}無if本文で暗黙のブロック・スコープが有効か
+
+ enum {A, B};
+ int main() {
+     int rc = 1;
+     if (rc)
+         rc = sizeof(enum{B, A});
+     return A;
+ }
+
+c++ では sizeofの中でenum定義できない.
+
+*** &aname(a207);  c99/c99namescope2.c
+
+if条件式中の暗黙のブロック・スコープが有効か
+
+ enum {A, B};
+ 
+ int main() {
+     if (sizeof(enum{B, A}) == sizeof(long double))
+         ;
+     return A;
+ }
+
+c++ では sizeofの中でenum定義できない.
+
+*** &aname(a208);  c11/__STDC_VERSION__.c
+
+c11対応ならば __STDC_VERSION__ の値
+
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_VERSION__
+     printf("c11/__STDC_VERSION__.c, %s\n", M_TO_S(__STDC_VERSION__));
+  #else
+     printf("c11/__STDC_VERSION__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+*** &aname(a209);  c11/__STDC_NO_ATOMICS__.c
+
+__STDC_NO_ATOMICS__ マクロが定義されているか
+
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_NO_ATOMICS__
+     printf("c11/__STDC_NO_ATOMICS__.c, %s\n", M_TO_S(__STDC_NO_ATOMICS__));
+  #else
+     printf("c11/__STDC_NO_ATOMICS__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+c11対応コンパイラで atomic関係のサポートをしていない場合に定義.
+
+*** &aname(a210);  c11/__STDC_NO_COMPLEX__.c
+
+__STDC_NO_COMPLEX__ マクロが定義されているか
+
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_NO_COMPLEX__
+     printf("c11/__STDC_NO_COMPLEX__.c, %s\n", M_TO_S(__STDC_NO_COMPLEX__));
+  #else
+     printf("c11/__STDC_NO_COMPLEX__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+c11対応コンパイラで complex関係のサポートをしていない場合に定義.
+
+*** &aname(a211);  c11/__STDC_NO_THREADS__.c
+
+__STDC_NO_THREADS__ マクロが定義されているか
+
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_NO_THREADS__
+     printf("c11/__STDC_NO_THREADS__.c, %s\n", M_TO_S(__STDC_NO_THREADS__));
+  #else
+     printf("c11/__STDC_NO_THREADS__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+c11対応コンパイラで thread関係のサポートをしていない場合に定義.
+
+*** &aname(a212);  c11/__STDC_NO_VLA__.c
+
+__STDC_NO_VLA__ マクロが定義されているか
+
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_NO_VLA__
+     printf("c11/__STDC_NO_VLA__.c, %s\n", M_TO_S(__STDC_NO_VLA__));
+  #else
+     printf("c11/__STDC_NO_VLA__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+c11対応コンパイラで 可変長ローカル配列のサポートをしていない場合に定義.
+
+*** &aname(a213);  c11/__STDC_ANALYZABLE__.c
+
+__STDC_ANALYZABLE__ マクロが定義されているか
+
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_ANALYZABLE__
+     printf("c11/__STDC_ANALYZABLE__.c, %s\n", M_TO_S(__STDC_ANALYZABLE__));
+  #else
+     printf("c11/__STDC_ANALYZABLE__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+*** &aname(a214);  c11/__STDC_UTF_16__.c
+
+__STDC_UTF_16__ マクロが定義されているか
+
+ /*#include <uchar.h>*/
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_UTF_16__
+     printf("c11/__STDC_UTF_16__.c, %s\n", M_TO_S(__STDC_UTF_16__));
+  #else
+     printf("c11/__STDC_UTF_16__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+utf16 に対応している場合に定義.
+
+*** &aname(a215);  c11/__STDC_UTF_32__.c
+
+__STDC_UTF_32__ マクロが定義されているか
+
+ /*#include <uchar.h>*/
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_UTF_32__
+     printf("c11/__STDC_UTF_32__.c, %s\n", M_TO_S(__STDC_UTF_32__));
+  #else
+     printf("c11/__STDC_UTF_32__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+utf32 に対応している場合に定義.
+
+*** &aname(a216);  c11/__STDC_LIB_EXT1__.c
+
+__STDC_LIB_EXT1__ マクロが定義されているか
+
+ #include <string.h>
+ #if defined(__cplusplus)
+ #include <stdio.h>
+ #endif
+ #define M_TO_S(x)       M_TO_S2(0,x)
+ #define M_TO_S2(dmy,x)  #x
+ 
+ int main() {
+  #ifdef __STDC_LIB_EXT1__
+     printf("c11/__STDC_LIB_EXT1__.c, %s\n", M_TO_S(__STDC_LIB_EXT1__));
+  #else
+     printf("c11/__STDC_LIB_EXT1__.c , no support\n");
+  #endif
+     return 0;
+ }
+
+セキュア(_s)系ライブラリ関数等をサポートしている場合に定義.
+
+*** &aname(a217);  c11/_Static_assert.c
+
+_Static_assert が使えるか
+
+ _Static_assert(sizeof(char) == 1, "msg1");
+ //_Static_assert(sizeof(char) != 1, "msg2");
+ int main() {
+     return 0;
+ }
+
+c++11 では static_assert
+
+*** &aname(a218);  c11/_Noreturn.c
+
+_Noreturn が使えるか
+
+ _Noreturn void func() {
+     exit(0);
+ }
+ 
+ int main() {
+     func();
+     return 1;
+ }
+
+c++11 では ［［noreturn］］
+
+*** &aname(a219);  c11/_Alignas.c
+
+_Alignas(a) が使えるか
+
+ _Alignas(8)      char   g_buf[32];
+ _Alignas(double) char   g_buf2[32];
+ 
+ int main() {
+     return 0;
+ }
+
+c++11 では alignas(a)
+
+*** &aname(a220);  c11/_Alignof.c
+
+_Alignof(t) が使えるか
+
+ int main() {
+     unsigned l = _Alignof(double);
+     return 0;
+ }
+
+c++11 では alignof(t)
+
+*** &aname(a221);  c11/_Atomic.c
+
+_Atomic が使えるか
+
+ _Atomic int g_atomic_var;
+ 
+ int main() {
+     return 0;
+ }
+
+c++11 では std::atomic を使う
+
+*** &aname(a222);  c11/_Thread_local.c
+
+_Thread_local が使えるか
+
+ _Thread_local int tls_var;
+ 
+ int main() {
+     tls_var = 0;
+     return tls_var;
+ }
+
+c++11 では thread_local
+
+*** &aname(a223);  c11/_Generic.c
+
+_Generic が使えるか
+
+ float Negf(float x) { return -x; }
+ double Neg(double x) { return -x; }
+ long double Negl(long double x) { return -x; }
+ #define Neg(X)      _Generic((X), long double: Negf, default: Neg, float: Negf)(X)
+ 
+ int main() {
+     float f = Neg(1.f);
+     double d = Neg(1.0);
+     long double ld = Neg(1.L);
+     return 0;
+ }
+
+c++ では関数オーバーロードや templateを使う
+
+*** &aname(a224);  gcc/_Complex_number_i.c
+
+1.0+2.0i のような Complex表記ができるか
+
+ int main() {
+     double _Complex dc  = 0;
+     double _Complex dc2 = 0.0 + 1.0i;
+     dc  = dc + dc2 + (1.0 + 2.0i);
+     dc -= 1.0 + 3.0i;
+     return (int)(dc);
+ }
+
+通常は #include <complex.h> して 1.0+2.0*I. c++は complex<double>(1.0，2.0) .
+
+*** &aname(a225);  gcc/_Complex_real_imag.c
+
+__real__ __imag__ が使えるか
+
+ int main() {
+     double _Complex dc = 0;
+     double dr = __real__ dc;
+     double di = __imag__ dc;
+     return 0;
+ }
+
+通常はライブラリ関数(creal(x) cimag(x)). c++は dc.real() dc.imag() .
+

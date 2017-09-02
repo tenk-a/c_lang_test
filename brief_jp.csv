@@ -1,0 +1,242 @@
+[= test-program =], [c基本機能]
+option , コンパイラオプション
+c/plain_char_is_signed.c , char の符号
+c/char_bit_size.c , char のビット数
+c/sizeof_char.c , char のバイト数
+c/sizeof_short.c , short のバイト数
+c/sizeof_int.c , int のバイト数
+c/sizeof_long.c , long のバイト数
+c/sizeof_ptr.c , ポインタのバイト数
+c/sizeof_float.c , float のバイト数
+c/sizeof_double.c , double のバイト数
+c/sizeof_longdouble.c , long double のバイト数
+c/short_int.c , short int と記述できるか
+c/unsigned_short_int.c , unsigned short int と記述できるか
+c/unsigned_int.c , unsigned int と記述できるか
+c/long_int.c , long int と記述できるか
+c/unsigned_long_int.c , unsigned long int と記述できるか
+c/cmp_int_uint.c , int値とunsigned値の比較(int→unsigned整数昇格) ,実プログラムでは (unsigned)n < 10U か 0 <= n && n < 10 のようにするだろう.
+c/m1div4294967295.c , 整数昇格の都合で -1/4294967295 の結果が 0(C99以降) か 1(以前)か,4294967295 が unsigned long として扱われるか long long として扱われるか. [[こちら>http://d.hatena.ne.jp/yupo5656/20070204/p1]] を参考に用意( LP64で負の割算がc99仕様でない場合結果は-1. サフィックス無の時は未定義動作の類らしい ) (ソースでlong long 64bit整数がない場合は32bit整数でエラー回避)
+c/macro_ifdef.c , #ifdef が使えるか
+c/macro_define.c , 引数有の #define マクロが使えるか
+c/macro_file_line.c , __FILE__ __LINE__ __DATE__ __TIME__ があるか
+c/bitfield.c , ビットフィールドが使えるか
+c/local_var_init.c , ローカル変数定義で初期値が使えるか
+c/local_block_var.c , ブロック内でローカル変数定義できるか
+c/local_static_var.c , 関数ローカルでstatic変数定義できるか
+c/local_block_static_var.c , ブロック内でstatic変数定義できるか
+c/union.c , union が使えるか
+c/struct1.c , 構造体が使えるか
+c/struct2.c , 同名のメンバー名が他のstructで別の型・相対位置でも使えるか
+c/number_of_int32_without_l.c , サフィックス無で32ビット符号付整数リテラルが使えるか ,8/16bitコンパイラを想定(sizeof(int)=2). 普通は intよりも幅広の整数リテラルを扱う場合はサフィックスで明示する.
+c/number_of_uint32_without_ul.c , サフィックス無で32ビット符号無16進整数リテラルが使えるか ,8/16bitコンパイラを想定(sizeof(int)=2). 普通は intよりも幅広の整数リテラルを扱う場合はサフィックスで明示する.
+c/number_of_int64_without_ll.c , サフィックス無で64ビット符号付整数リテラルが使えるか ,sizeof(int)=4 sizeof(long long)=8 を想定. 普通は intよりも幅広の整数リテラルを扱う場合はサフィックスで明示する.
+c/number_of_uint64_without_ull.c , サフィックス無で64ビット符号無16進整数リテラルが使えるか ,sizeof(int)=4 sizeof(long long)=8 を想定. 普通は intよりも幅広の整数リテラルを扱う場合はサフィックスで明示する.
+[KR-C] , [old-c特有]
+kr/extern_in_func.c , 関数中のextern 宣言が関数外に影響するか
+kr/oct0809.c , 8進数リテラルで 8・9が使えてしまうか
+[c90] , [c90 で確定した機能]
+c90/sizeof_signed_char.c , signed char のバイト数
+c90/sizeof_unsigned_char.c , unsigned char のバイト数
+c90/sizeof_wide_ch.c , L'C' のバイト数
+c90/sizeof_is_unsigned.c , sizeofした結果の値の型がunsignedか
+c90/number_of_uint.c , 後ろに U を付けた整数リテラルが使えるか
+c90/number_of_long.c , 後ろに L を付けた整数リテラルが使えるか 
+c90/number_of_ulong.c , 後ろに UL を付けた整数リテラルが使えるか
+c90/number_of_flt.c , 後ろに F を付けたfloatリテラルが使えるか
+c90/number_of_ldbl.c , 後ろに L を付けた long double リテラルが使えるか
+c90/macro_bsl_join.c , #行の末に \ を置いて次行を連結できるか
+c90/macro_if.c , #if が使えるか
+c90/macro_elif.c , #elif が使えるか
+c90/macro_defined.c , #ifで defined が使えるか
+c90/macro_pragma.c , #pragma が使えるか(未対応の指定でエラーにならないか)
+c90/macro_to_str.c , マクロで #による"文字列"リテラル化ができるか
+c90/macro_cat.c , マクロで ## による連結が行えるか
+c90/macro_tok_cat.c , トークン連結マクロが使えるか
+c90/comment_to_spc.c , /*コメント*/ が空白扱いになっているか ,c90(c89)以前は全く消え去るタイプがあり、トークン連結のテクニックになっていた(今は##を使う).
+c90/str_join.c , 隣接する "文字列リテラル" が連結するか
+c90/entry.c , かって予約語だったentryがユーザ定義の名前として使えるか
+c90/enum.c , enum が使えるか
+c90/func_arg_struct.c , 関数引数で構造体の値渡を使えるか.
+c90/func_arg_ppp.c , 可変引数指定 ... が使えるか
+c90/func_ptr_call.c , 関数へのポインタを用いて単純な関数呼出が記述できるか
+c90/plus.c , 単項 + が使えるか
+c90/switch_long.c , switch の分岐値として long 型が使えるか
+c90/struct_ini_comma.c , struct 型の初期値で余分にカンマがあっても良いか.
+c90/struct_copy.c , 構造体変数同士の代入が行えるか
+c90/struct_local_ini.c , ローカル構造体変数の定義で初期値を記述できるか
+c90/struct_of_funcResult.c , 構造体値を関数の帰値にできるか
+c90/union_ini.c , 共用体の初期化が行えるか
+c90/union_local_ini.c , 共用体のローカル変数の初期化が行えるか
+c90/const_var.c , const 変数定義できるか
+c90/volatile_var.c , volatile変数定義できるか
+c90/void_arg.c , 引数無関数宣言で引数に void 指定できるか
+c90/const_volatile_var.c , const volatile 変数できるか ,rom化がらみで使われることがあるらしい(よくしらず)
+c90/wide_char.c , L'A'のようなワイド文字リテラルが使えるか
+c90/wide_cstr.c , L"str"のようなワイド文字列リテラルが使えるか
+c90/wide_cstr_join.c , 隣接ワイド文字列リテラル同士の連結が行われるか
+[c99] , [c99 で追加された機能]
+c99 option , c99 有効化オプション
+c99/sizeof_llong.c , long long のバイト数
+c99/sizeof_ullong.c , unsigned long long のバイト数
+c99/number_of_llong.c , 後ろに LL のついた整数リテラルが使えるか
+c99/number_of_ullong.c , 後ろに ULL のついた整数リテラルが使えるか
+c99/switch_llong.c , switch で long long 値が使えるか
+c99/enum_ini_comma.c , enum 定義で最後に余分なカンマを置けるか
+c99/mod_minus.c , 負値のある%計算がc99の仕様になっているか ,今時のCPU用なら満たしている模様
+c99/m1div4294967295.c , 整数昇格の都合で -1/4294967295 の結果が 0(C99以降) か 1(以前)か,[[こちら>http://d.hatena.ne.jp/yupo5656/20070204/p1]] を参考に用意. LP64で負の割算がc99仕様でない場合結果は-1. 未定義動作の類らしい. もちろん避けたほうがよく.
+c99/struct_memb_array_0.c , 構造体メンバでサイズ 0 の配列を定義できるか
+c99/line_comment.c , 行コメント//が使えるか
+c99/line_comment_bsl_join.c , 行コメント//の末に\があったとき次行が連結されるか ,通常、しないおほうが良い. SJISでは次行を暗黙にコメント化してしまうことも.
+c99/macro_empty_arg1.c , 1引数マクロで引数が空の場合に対応しているか ,1引数マクロを引数無しで使った場合にエラーにするか否かはコンパイラによって対応が違う模様.
+c99/macro_empty_arg2.c , 2引数マクロで引数が空の場合に対応しているか ,ここ10年くらいのコンパイラなら対応している模様.
+c99/macro_va.c , 可変引数マクロを使えるか
+c99/macro_va_2.c , 可変引数マクロから作った引数有マクロを使えるか ,vc でエラーになったのでテストルーチンに.
+c99/__func__.c , __func__ が使えるか ,関数名文字列をもつローカルstatic変数.
+c99/_Pragma.c , _Pragma が使えるか ,　#pragma の別表現. マクロでも使えるようにした状態.
+c99/inline_func.c , 関数の inline 指定が使えるか ,c++では普段どおり. 古いコンパイラでは __inline _inline __inline__ 等.
+c99/wide_cstr_join99.c , ワイド文字列リテラルとそうでない文字列リテラルの連結が行えるか
+c99/hexfloat.c , 16進数浮動小数点リテラルが使えるか
+c99/compound_literal.c , (型名){...} による型値リテラルが使えるか ,c++11では 型{...}
+c99/local_def_var.c , (c++のように)文の後でもローカル変数定義できるか ,c++では普段どおり.
+c99/for_def_var.c , for の第一項でローカル変数定義できるか ,c++では普段どおり.
+c99/unicode_esc_char.c , \u???? を文字列リテラル中に用いることができるか
+c99/var_name_esc_unicode.c , \u???? を用いて変数定義できるか
+[c11] , [c11で追加された機能]
+c11 option , c11有効化オプション
+c11/dup_typedef.c , 同じtypedef定義を複数回行えるか ,c++での仕様がc11で反映されたもの
+c11/anonymous_struct_in_union.c , union 定義中に 無名構造体を使えるか ,c++での仕様がc11で反映されたもの
+c11/anonymous_union_in_struct.c , struct 定義中に 無名共用体を使えるか ,c++での仕様がc11で反映されたもの
+c11/u8str.c , u8"文字列" を使えるか
+c11/u16str.c , u"文字列" を使えるか
+c11/u32str.c , U"文字列" を使えるか
+[Japanese] , [日本語文字関係]
+SJIS option , SJIS有効化オプション
+c90/wide_char_sjis.c , SJISソースで L'字' が使えるか
+c90/wide_char_utf8.c , UTF8ソースで L'字' が使えるか
+c90/wide_cstr_sjis.c , SJISソースで L'字' L"文字列" が使えるか
+c90/wide_cstr_utf8.c , UTF8ソースで L'字' L"文字列" が使えるか
+c99/line_comment_sjis.c , SJISソースで 行末に0x5c(\)を含む文字を使って無問題か ,未対応だと次行をコメント化し1文が実行されないバグに化ける. 全角使った//コメントの最後には半角文字を置くのが無難.
+c99/var_name_utf8.c , UTF8ソースで 0x7fより大きい文字コードを名前に使えるか
+c99/var_name_sjis.c , SJISソースで 0x7fより大きい文字コードを名前に使えるか
+c99/macro_name_utf8.c , UTF8ソースで 0x7fより大きい文字コードをマクロ名に使えるか
+c99/macro_name_sjis.c , SJISソースで 0x7fより大きい文字コードをマクロ名に使えるか
+[c++] , [c++仕様準拠]
+c++/void_main_return_0.c , void main で暗黙に 0を返すか ,　gcc clang あたりはc++でコンパイルしても void main をエラーにするようなので(c++でも)使用しないほうが無難と思われる.
+[vc/gcc extention] , [VC/GCC 拡張共通]
+vc/sizeof_m128.c , __m128 のバイト数 ,SSE (相当) がある場合に使える機能. ※デフォルトで使えなくてもSSEを有効にするオプションを設定すれば使えるコンパイラもある.
+vc/__restrict.c , __restrict が使えるか ,c99 の restrict 相当. c/c++両対応コンパイラの場合、cでrestrict対応していてもc++では未対応になるが、__restrict についてはc/c++どちらでも使える模様.
+gcc/__FUNCTION__.c , __FUNCTION__ が使えるか ,c99 の __func__ 相当
+vc/__COUNTER__.c , __COUNTER__ マクロが使えるか ,使うたびに値を1カウントアップするマクロ(名).
+vc/pragma_once.c , #pragma once が使えるか ,同一ファイルの#includeを１度きりにする.
+[vc extention] , [VC の拡張機能]
+vc/void_main_return_0.c , void main で暗黙に 0を返すか ,c++で int main の最後のreturn 省略の延長のようなもの. が gcc のように void main を許さないものもあるので避けるが無難.
+vc/sizeof_int64.c , __int64 のバイト数 ,64bit符号付整数型. c99 の long long がない場合代用になる.
+vc/sizeof_unsigned_int64.c , unsigned __int64 のバイト数 ,64bit符号無整数型. c99 の unsigned long long がない場合代用になる.
+vc/__cdecl.c , __cdecl が使えるか ,一般的な C引数指定
+vc/__stdcall.c , __stdcall が使えるか ,旧pascal 指定
+vc/__fastcall.c , __fastcall が使えるか ,レジスタ渡指定
+vc/__forceinline.c , __forceinline が使えるか ,強制 inline 指定
+vc/declspec_noinline.c , __declspec(noinline) が使えるか ,inline 禁止
+vc/declspec_selectany.c , __declspec(selectany) が使えるか ,複数定義されてもリンク時に１つだけ実体化. gccの __attribute__( (weak) ) 相当.
+vc/declspec_align.c , __declspec(align(N)) が使えるか ,c11 の _Align(N) 相当
+vc/declspec_noreturn.c , __declspec(noreturn) が使えるか ,c11 の _Noreturn 相当
+vc/declspec_thread.c , declspec(thread) が使えるか  ,c11 の _Thread_local 相当
+vc/declspec_dllimport.c , __declspec(dllimport) を使えるか(コンパイルのみ) ,windows dll 用宣言
+vc/declspec_dllexport.c , __declspec(dllexport) を使えるか(コンパイルのみ) ,windows dll 用定義
+vc/include_intrin.c , 　#include <intrin.h> できるか ,intrin.h は vcの組込関数の宣言がひととおりあるヘッダで組込関数を使う場合にincludeすることになる. このテストの結果で_intrin.hヘッダを作り、vc組込関数を使うテストではそれをincludeしている.
+vc/_InterLockedIncrement.c , _InterLockedIncrement/_InterLockedDecrementが使えるか ,atomic なインクリメント/デクリメント
+vc/_InterLockedExchange.c , _InterLockedExchange が使えるか ,atomic な 比較＆設定
+vc/_ReadWriteBarrier.c , _ReadWriteBarrier が使えるか ,メモリバリア関係. vcではx64は可でx86は不可.
+vc/_ByteSwap.c , _ByteSwap_???? が使えるか ,整数値のバイト並びを逆順にする.
+vc/_BitScan.c , _BitScanForward/_BitScanReverseが使えるか ,ビットカウント関係.
+vc/_BitScan64.c , _BitScanForward64/_BitScanReverse64が使えるか ,ビットカウント関係. vcでは x64のみ可. x86 は不可.
+vc/__FUNCSIG__.c , __FUNCSIG__ (関数定義文字列)マクロが使えるか ,関数定義文字列. gccの __PRETTY_FUNCTION__ 相当.
+vc/__FUNCDNAME__.c , __FUNCDNAME__ (マングル名文字列)マクロが使えるか
+vc/__pragma.c , __pragma が使えるか ,C99の _Pragma 相当
+[gcc extention] , [gcc の拡張機能]
+gcc/sizeof_int128.c , __int128 のバイト数 ,
+gcc/switch_i128.c , unsigned __int128 変数で switch が行えるか ,
+gcc/binary_literal.c , ２進数リテラル 0b???? が使えるか ,c++14で組み込まれる予定らしい.
+gcc/attribute_alias.c , __attribute__( (alias("name")) ) が使えるか ,リンク時名の別名設定.
+gcc/attribute_always_inline.c , __attribute__( (always_inline) ) が使えるか ,強制 inline
+gcc/attribute_noinline.c , __attribute__( (noinline) ) が使えるか ,inline 禁止
+gcc/attribute_selectany.c , __attribute__( (selectany) ) が使えるか ,複数定義されてもリンク時に１つだけ実体化. vcの __declspec(selectany) 相当.
+gcc/attribute_weak.c , __attribute__( (weak) ) が使えるか ,複数定義されてもリンク時に１つだけ実体化. vcの __declspec(selectany) 相当.
+gcc/attribute_aligned.c , __attribute__( (aligned(N)) ) が使えるか ,c11 の _Align(N) 相当
+gcc/attribute_noreturn.c , __attribute__( (noreturn) ) が使えるか ,c11 の _Noreturn 相当
+gcc/__thread_var.c , __thread 変数定義ができるか ,c11 の _Thread_local 相当
+gcc/__sync_add_and_fetch.c , __sync_add_and_fetch が使えるか ,atomic な加算/減算
+gcc/__sync_val_compare_and_swap.c , __sync_val_compare_and_swap が使えるか ,atomic な比較＆交換
+gcc/__builtin_bswap16.c , __builtin_bswap16 が使えるか ,16ビット整数のバイト並びを逆順にする
+gcc/__builtin_bswap3264.c , __builtin_bswap32 __builtin_bswap64 が使えるか ,32/64ビット整数のバイト並びを逆順にする
+gcc/__builtin_clz.c , __builtin_clz/__builtin_tlz/__builtin_popcount が使えるか ,int(32ビット値)でのビットカウント関係
+gcc/__builtin_clzll.c , __builtin_clzll/__builtin_tlzll/__builtin_popcountll が使えるか ,long long(64ビット値)でのビットカウント関係
+gcc/__PRETTY_FUNCTION__.c , __PRETTY_FUNCTION__ が使えるか ,関数定義文字列. vcの __FUNCSIG__ 相当
+gcc/include_next.c , #include_next が使えるか ,　#include でヘッダ読込後、includeパスでそれよりも後ろにある同名ファイルをinclude
+ , 
+[= not compatible with c++ =] , [= C++非互換 機能 =]
+c/sizeof_ch.c , 'C' のバイト数 ,c++では char型扱いで 1、cでは整数昇格でintになってsizeof(int)=4 (8|16bit-cpuでは2)
+kr/old_style_func.c , 旧仕様の関数定義ができるか ,c++では 旧仕様の関数定義は使えない.
+kr/ref_register.c , register 変数のアドレスを取れるか ,c++では register 無視のでアドレスとれるが c90ではアドレスが取れない.
+c/default_type.c , 型省略でint定義ができるか ,c++では 省略できない. c でも c99以降は省略できない.
+c/multi_def_var.c , 同一グローバル変数を複数回定義できるか ,c は複数回指定できるが c++ はできない.
+c/auto.c , C言語としての auto 指定ができるか ,c++11 以降だと auto の用法がかわったので旧記法はエラーになることもある(vc11はエラーだが gcc clang は可)
+c/struct3.c , struct S{} と typedef struct{} S が別物として定義できるか ,c++ だとエラー. cだと使える. 通常、バグの元になりやすいのでしないほうがよい.
+c/struct4.c , 関数内の struct a 定義がグローバル変数 a を隠さないか ,c++ だと隠す状態. 通常、こんな状況をつくるべきでない.
+c/struct_struct.c , 構造体Aの中で定義された構造体Bを外部で直接利用できるか ,c++ だと出来ない. 通常、中の定義を流用しない. するなら最初から外に定義.
+c/recersive_main.c , main()を再帰呼び出しできるか ,c++ では出来なくてよい.（だけどできる方が多そう)
+c/sizeof_comma_op.c , char a[9]; sizeof( (char)0，a ) が 左辺値(9)か 右辺値( sizeof(char*) )か ,通常 c は右辺値(rvalue)、c++ は左辺値(lvalue)になる. 普段こんな記述をすることはまずないだろう.
+[c90] , [c90 の機能]
+c90/void_ptr.c , void* から他の型のポインタへキャスト無しで代入できるか ,c++ ではできない. キャスト必須.
+c90/const_var_unini.c , 初期値指定無しの const 変数を使えるか ,c++ ではできない.
+c90/char_array_no_null.c , char a[N] を '\0'無で丁度長さNの文字列リテラルで初期化できるか ,c++ ではできない.
+c90/ref_array.c , 配列名のみに対して & をつけてアドレスが取得できるか ,c++ ではできない.
+c90/enum_var_set.c , enum 変数に直接整数値を設定できるか ,c++ ではキャスト必須.
+c90/struct_def_func_ret.c , 関数定義の返型で構造体定義できるか ,c++ ではできない.
+c90/struct_def_func_arg.c , 関数定義の引数で構造体定義できるか ,c++ ではできない.
+[c99] , [c99 の機能]
+c99/__STDC_VERSION__.c , __STDC_VERSION__ が定義されているか。あればその値 ,c99で定義され c99や c11の制定年月を値に持つが、コンパイラによってはモード違いで c90 c95 の制定年月を設定するモノもある.
+c99/__STDC_ISO_10646__.c , __STDC_ISO_10646__ が定義されているか。あればその値 ,wchar_t が UNICODE(ISO 10646) に準拠していれば定義.
+c99/__STDC_IEC_559__.c , __STDC_IEC_559__ が定義されているか。,IEC 60559浮動小数点仕様に準拠していれば定義.
+c99/__STDC_IEC_559_COMPLEX__.c , __STDC_IEC_559_COMPLEX__ が定義されているか。 ,IEC 60559 の複素数仕様に準拠していれば定義(_Imaginary がない場合 _Complexがあっても未定義)
+c99/__STDC_MB_MIGHT_NEQ_WC__.c , __STDC_MB_MIGHT_NEQ_WC__ が定義されているか。 ,未定義時は 文字リテラルの範囲で 'C'==L'C' が成り立つことが期待できるが、定義時は 'C'!=L'C'があり得る状態. (char EBCDIC / wchar_t UNICODE のような場合だろうか)
+c99/sizeof_Bool.c , _Bool のバイト数 ,c++ だと bool.
+c99/sizeof_float_Complex.c , float _Complex のバイト数 ,c++ だと std::complex<float> . c++11 からバイナリ互換.
+c99/sizeof_double_Complex.c , double _Complex のバイト数 ,c++ だと std::complex<double> . c++11 からバイナリ互換.
+c99/sizeof_long_double_Complex.c , long double _Complex のバイト数 ,c++ だと std::complex<long double> . c++11 からバイナリ互換.
+c99/sizeof_float_Imaginary.c , float _Imaginary のバイト数 ,c99対応コンパイラでも未サポートの場合あり(gccやclang)
+c99/sizeof_double_Imaginary.c , double _Imaginary のバイト数 ,c99対応コンパイラでも未サポートの場合あり(gccやclang)
+c99/sizeof_long_double_Imaginary.c , long double _Imaginary のバイト数 ,c99対応コンパイラでも未サポートの場合あり(gccやclang)
+c99/designated_ini.c , 構造体の初期化でメンバー名による初期化が行えるか
+c99/array_ini.c , 配列の初期化で添字番号による部分初期化が行えるか
+c99/compound_literal_arg.c , (型名){...} へのポインタを関数引数でつかえるか ,c++11 からは 型名{..} があるが 関数引数での一時オブジェクトのアドレスを取れないので不可のよう. const&なら可.（型がconstexpr対応してたらポインタでも可能性有？無？ 未調査)
+c99/variable_length_array.c , 可変長(実行時サイズ指定)(ローカル)配列変数が使えるか ,alloca(n) を文法化したものとも. c++14で対応予定らしい(ただしsizeofやtypedefは未対応)
+c99/variable_length_array_sizeof.c , 可変長配列のsizeofが使えるか ,c++ 不可
+c99/variable_length_array_typedef.c , 可変長配列のtypedefが使えるか ,c++ 不可
+c99/variable_length_array_funcarg.c , 関数引数で可変長配列が使えるか ,c++ 不可
+c99/variable_length_array_funcarg2.c , 関数引数で可変長配列が使えるか(サイズ後置) ,c++ 不可
+c99/restrict_ptr.c , restrict ポインタが使えるか ,restrict がないのでc++不可. しかしメーカー拡張でc/c++両用の __restrict のような同機能のものが用意されていることはある.
+c99/array_type_qualifiers.c , 関数引数の配列の定義で[cv修飾]が使えるか ,(c++での扱いをよくわかったおらず)
+c99/c99namescope.c , {}無if本文で暗黙のブロック・スコープが有効か ,c++ では sizeofの中でenum定義できない.
+c99/c99namescope2.c , if条件式中の暗黙のブロック・スコープが有効か ,c++ では sizeofの中でenum定義できない.
+[c11] , [c11 の機能]
+c11/__STDC_VERSION__.c , c11対応ならば __STDC_VERSION__ の値
+c11/__STDC_NO_ATOMICS__.c , __STDC_NO_ATOMICS__ マクロが定義されているか ,c11対応コンパイラで atomic関係のサポートをしていない場合に定義.
+c11/__STDC_NO_COMPLEX__.c , __STDC_NO_COMPLEX__ マクロが定義されているか ,c11対応コンパイラで complex関係のサポートをしていない場合に定義.
+c11/__STDC_NO_THREADS__.c , __STDC_NO_THREADS__ マクロが定義されているか ,c11対応コンパイラで thread関係のサポートをしていない場合に定義.
+c11/__STDC_NO_VLA__.c , __STDC_NO_VLA__ マクロが定義されているか ,c11対応コンパイラで 可変長ローカル配列のサポートをしていない場合に定義.
+c11/__STDC_ANALYZABLE__.c , __STDC_ANALYZABLE__ マクロが定義されているか ,
+c11/__STDC_UTF_16__.c , __STDC_UTF_16__ マクロが定義されているか ,utf16 に対応している場合に定義.
+c11/__STDC_UTF_32__.c , __STDC_UTF_32__ マクロが定義されているか ,utf32 に対応している場合に定義.
+c11/__STDC_LIB_EXT1__.c , __STDC_LIB_EXT1__ マクロが定義されているか ,セキュア(_s)系ライブラリ関数等をサポートしている場合に定義.
+c11/_Static_assert.c , _Static_assert が使えるか ,c++11 では static_assert
+c11/_Noreturn.c , _Noreturn が使えるか ,c++11 では ［［noreturn］］
+c11/_Alignas.c , _Alignas(a) が使えるか ,c++11 では alignas(a)
+c11/_Alignof.c , _Alignof(t) が使えるか ,c++11 では alignof(t)
+c11/_Atomic.c , _Atomic が使えるか ,c++11 では std::atomic を使う
+c11/_Thread_local.c , _Thread_local が使えるか ,c++11 では thread_local
+c11/_Generic.c , _Generic が使えるか ,c++ では関数オーバーロードや templateを使う
+[gcc extention] , [gcc 拡張]
+gcc/_Complex_number_i.c , 1.0+2.0i のような Complex表記ができるか ,通常は #include <complex.h> して 1.0+2.0*I. c++は complex<double>(1.0，2.0) .
+gcc/_Complex_real_imag.c , __real__ __imag__ が使えるか ,通常はライブラリ関数(creal(x) cimag(x)). c++は dc.real() dc.imag() .
