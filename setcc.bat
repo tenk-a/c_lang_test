@@ -9,7 +9,10 @@ set "cc_base_path=%cc_save_path%"
 
 set COMPILER=%1
 shift
-if /i "%COMPILER%"=="vc11x64"	goto L_VC11x64
+if /i "%COMPILER%"=="vc14"   	goto L_VC14
+if /i "%COMPILER%"=="vc14x64"	goto L_VC14x64
+if /i "%COMPILER%"=="vc12"   	goto L_VC12
+if /i "%COMPILER%"=="vc12x64"	goto L_VC12x64
 if /i "%COMPILER%"=="vc11"   	goto L_VC11
 if /i "%COMPILER%"=="vc11x64"	goto L_VC11x64
 if /i "%COMPILER%"=="vc10"   	goto L_VC10
@@ -51,6 +54,26 @@ echo       clang,dmc,ow,bcc,pcc
 echo       lcc,pccwin,pellesc,pellesc64
 echo       orangec,coins,lsic86
 goto :EOF
+
+:L_VC14
+	set "PATH=%cc_base_path%"
+	call "%VS140COMNTOOLS%vsvars32.bat"
+	goto L_VC_CMN
+
+:L_VC14x64
+	set "PATH=%cc_base_path%"
+	call "%VS140COMNTOOLS%..\..\vc\bin\amd64\vcvars64.bat"
+	goto L_VC_CMN64
+
+:L_VC12
+	set "PATH=%cc_base_path%"
+	call "%VS120COMNTOOLS%vsvars32.bat"
+	goto L_VC_CMN
+
+:L_VC12x64
+	set "PATH=%cc_base_path%"
+	call "%VS120COMNTOOLS%..\..\vc\bin\amd64\vcvars64.bat"
+	goto L_VC_CMN64
 
 :L_VC11
 	set "PATH=%cc_base_path%"

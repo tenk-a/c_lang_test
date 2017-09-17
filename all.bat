@@ -7,9 +7,9 @@ call setcc   lccwin
 call cl_test lccwin64 lccwin64_3.8
 
 rem no hung
-call setcc   vc71
-call cl_test vc       vc7.1
-call cl_test vc++     vc++7.1
+rem call setcc   vc71
+rem call cl_test vc       vc7.1
+rem call cl_test vc++     vc++7.1
 call setcc   vc8
 call cl_test vc       vc8
 call cl_test vc++     vc++8
@@ -22,12 +22,19 @@ call cl_test vc++     vc++11
 call setcc   vc11x64
 call cl_test vc       vc11_x64
 call cl_test vc++     vc++11_x64
-rem call setcc   vc12
-rem call cl_test vc       vc12
-rem call cl_test vc++     vc++12
-rem call setcc   vc12x64
-rem call cl_test vc       vc12_x64
-rem call cl_test vc++     vc++12_x64
+call setcc   vc12
+call cl_test vc       vc12
+call cl_test vc++     vc++12
+call setcc   vc12x64
+call cl_test vc       vc12_x64
+call cl_test vc++     vc++12_x64
+call setcc   vc14
+call cl_test vc       vc14
+call cl_test vc++     vc++14
+call setcc   vc14x64
+call cl_test vc       vc14_x64
+call cl_test vc++     vc++14_x64
+
 call setcc   tdm32
 call cl_test mingw    mingw_gcc_4.7.1_tdm
 call cl_test mingw++  mingw_g++_4.7.1_tdm
