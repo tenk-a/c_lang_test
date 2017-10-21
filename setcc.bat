@@ -6,9 +6,12 @@ set LIB=
 
 if "%cc_save_path%"=="" set "cc_save_path=%path%"
 set "cc_base_path=%cc_save_path%"
+set "PATH=%cc_base_path%"
 
 set COMPILER=%1
 shift
+if /i "%COMPILER%"=="vc141"   	goto L_VC141
+if /i "%COMPILER%"=="vc141x64"	goto L_VC141x64
 if /i "%COMPILER%"=="vc14"   	goto L_VC14
 if /i "%COMPILER%"=="vc14x64"	goto L_VC14x64
 if /i "%COMPILER%"=="vc12"   	goto L_VC12
@@ -55,77 +58,79 @@ echo       lcc,pccwin,pellesc,pellesc64
 echo       orangec,coins,lsic86
 goto :EOF
 
+
+:L_VC141
+	pushd .
+	call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\Common7\Tools\VsMSBuildCmd.bat"
+	call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
+	popd
+	goto L_VC_CMN
+
+:L_VC141x64
+	pushd .
+	call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\Common7\Tools\VsMSBuildCmd.bat"
+	call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+	popd
+	goto L_VC_CMN64
+
 :L_VC14
-	set "PATH=%cc_base_path%"
 	call "%VS140COMNTOOLS%vsvars32.bat"
 	goto L_VC_CMN
 
 :L_VC14x64
-	set "PATH=%cc_base_path%"
 	call "%VS140COMNTOOLS%..\..\vc\bin\amd64\vcvars64.bat"
 	goto L_VC_CMN64
 
 :L_VC12
-	set "PATH=%cc_base_path%"
 	call "%VS120COMNTOOLS%vsvars32.bat"
 	goto L_VC_CMN
 
 :L_VC12x64
-	set "PATH=%cc_base_path%"
 	call "%VS120COMNTOOLS%..\..\vc\bin\amd64\vcvars64.bat"
 	goto L_VC_CMN64
 
 :L_VC11
-	set "PATH=%cc_base_path%"
 	call "%VS110COMNTOOLS%vsvars32.bat"
 	goto L_VC_CMN
 
 :L_VC11x64
-	set "PATH=%cc_base_path%"
 	call "%VS110COMNTOOLS%..\..\vc\bin\amd64\vcvars64.bat"
 	goto L_VC_CMN64
 
 :L_VC10
-	set "PATH=%cc_base_path%"
 	call "%VS100COMNTOOLS%vsvars32.bat"
 	goto L_VC_CMN
 
 :L_VC10x64
-	set "PATH=%cc_base_path%"
 	call "%VS100COMNTOOLS%..\..\vc\bin\amd64\vcvarsamd64.bat"
 	goto L_VC_CMN64
 
 :L_VC9
-	set "PATH=%cc_base_path%"
 	call "%VS90COMNTOOLS%vsvars32.bat"
 	goto L_VC_CMN
 
 :L_VC9x64
-	set "PATH=%cc_base_path%"
 	call "%VS90COMNTOOLS%..\..\vc\bin\amd64\vcvarsamd64.bat"
 	goto L_VC_CMN64
 
 :L_VC8
-	set "PATH=%cc_base_path%"
 	call "%VS80COMNTOOLS%vsvars32.bat"
 	goto L_VC_CMN
 
 :L_VC8x64
-	set "PATH=%cc_base_path%"
 	call "%VS80COMNTOOLS%..\..\vc\bin\amd64\vcvarsamd64.bat"
 	goto L_VC_CMN64
 
 :L_VC71
-	set "PATH=%cc_base_path%"
-	set "INCLUDE=C:\Program Files (x86)\Microsoft Visual Studio .NET 2003\SDK\v1.1\include\"
-	set "LIB=C:\Program Files (x86)\Microsoft Visual Studio .NET 2003\SDK\v1.1\Lib\"
-	call "%VS71COMNTOOLS%vsvars32.bat"
+	if "%VC71_DIR%"=="" set "VC7_DIR=%ProgramFiles(x86)%\Microsoft Visual Studio .NET 2003"
+	set "INCLUDE=%VC71_DIR%\SDK\v1.1\include\"
+	set "LIB=%VC71_DIR%\SDK\v1.1\Lib\"
+	call "%VC71_DIR%\Common7\tools\vsvars32.bat"
 	goto L_VC_CMN
 
 :L_VC6
-	set "PATH=%cc_base_path%"
-	set "VS60_VC_BIN=C:\Program Files\Microsoft Visual Studio\VC98\bin\"
-	call "%VS60_VC_BIN%vcvars32.bat"
+	if "%VC6_DIR%"=="" set "VC6_DIR=%ProgramFiles(x86)%\Microsoft Visual Studio"
+	call "%VC6_DIR%\VC6\bin\vcvars32.bat"
 	goto L_VC_CMN
 
 :L_VC_CMN
@@ -135,50 +140,50 @@ goto :EOF
 	goto :EOF
 
 :L_CYGWIN
-	set "PATH=c:\tools\coins\bin;c:\cygwin\bin;%cc_base_path%"
+	set "PATH=c:\tools\coins\bin;c:\cygwin\bin;%PATH%"
 	goto :EOF
 
 :L_TDM32
 	set COMPILER=mingw
 	set "MINGW_DIR=c:\tools\MinGW32_471tdm"
-	set "PATH=%MINGW_DIR%\bin;%cc_base_path%"
+	set "PATH=%MINGW_DIR%\bin;%PATH%"
 	goto :EOF
 
 :L_TDM64
 	set COMPILER=mingw
 	set "MINGW_DIR=c:\tools\MinGW64_471tdm"
-	set "PATH=%MINGW_DIR%\bin;%cc_base_path%"
+	set "PATH=%MINGW_DIR%\bin;%PATH%"
 	goto :EOF
 
 :L_MINGW_345
 	set COMPILER=mingw
 	set MSYS_ROOT=c:\tools\MinGW32_345
 	set MINGW_DIR=%MSYS_ROOT%\mingw
-	set "PATH=%MSYS_ROOT%\bin;%MINGW_DIR%\bin;%cc_base_path%"
+	set "PATH=%MSYS_ROOT%\bin;%MINGW_DIR%\bin;%PATH%"
 	goto :EOF
 
 :L_MINGW
 	set COMPILER=mingw
 	set MINGW_DIR=c:\MinGW
 	set MSYS_ROOT=%MINGW_DIR%\msys\1.0
-	set "PATH=%MSYS_ROOT%\bin;%MINGW_DIR%\bin;%cc_base_path%"
+	set "PATH=%MSYS_ROOT%\bin;%MINGW_DIR%\bin;%PATH%"
 	goto :EOF
 
 :L_CLANG31
 	set COMPILER=clang
 	set MINGW_DIR=c:\MinGW
 	set MSYS_ROOT=%MINGW_DIR%\msys\1.0
-	set "PATH=%MSYS_ROOT%\bin;%MINGW_DIR%\bin;%cc_base_path%"
+	set "PATH=%MSYS_ROOT%\bin;%MINGW_DIR%\bin;%PATH%"
 	goto :EOF
 
 :L_DMC856
 	set DMD_ROOT=c:\tools
-	set "PATH=%DMD_ROOT%\dm856free\bin;c:\tools\dsss\bin;%cc_base_path%"
+	set "PATH=%DMD_ROOT%\dm856free\bin;c:\tools\dsss\bin;%PATH%"
 	goto :EOF
 
 :L_OW19
 	SET WATCOM=C:\tools\watcom1.9
-	SET "PATH=%WATCOM%\BINNT;%WATCOM%\BINW;%cc_base_path%"
+	SET "PATH=%WATCOM%\BINNT;%WATCOM%\BINW;%PATH%"
 	SET "EDPATH=%WATCOM%\EDDAT"
 	SET "INCLUDE=%WATCOM%\H;%WATCOM%\H\NT;%INCLUDE%"
 	SET "FINCLUDE=%WATCOM%\SRC\FORTRAN"
@@ -186,20 +191,20 @@ goto :EOF
 
 :L_BCC55
 	set  BORLANDC55=c:\tools\borland\bcc55
-	set  "PATH=%BORLANDC55%\bin;%cc_base_path%"
+	set  "PATH=%BORLANDC55%\bin;%PATH%"
 	set  "include=%BORLANDC55%\include;%BORLANDC55%\include\Rw;%BORLANDC55%\include\psdk"
 	goto :EOF
 
 :L_LCC
 	set "LCC_DIR=c:\tools\lcc"
-	set "PATH=%cc_base_path%"
+	set "PATH=%PATH%"
 	call "%VS90COMNTOOLS%vsvars32.bat"
 	set "PATH=%LCC_DIR%\bin;%PATH%"
 	goto :EOF
 
 :L_LCCWIN
 	set "LCCWIN64_DIR=c:\tools\lccwin64"
-	set "PATH=%LCCWIN64_DIR%\bin;%cc_base_path%"
+	set "PATH=%LCCWIN64_DIR%\bin;%PATH%"
 	set "INCLUDE=%LCCWIN64_DIR%\include;%INCLUDE%"
 	goto :EOF
 
@@ -221,36 +226,36 @@ goto :EOF
 
 :L_PCC
 	set "PCCDIR=c:\tools\pcc"
-	set "PATH=%PCCDIR%\bin;%cc_base_path%"
+	set "PATH=%PCCDIR%\bin;%PATH%"
 	goto :EOF
 
 :L_TINYC
 	set "COMPILER=tinyc"
-	set "PATH=c:\tools\tcc0926;%cc_base_path%"
+	set "PATH=c:\tools\tcc0926;%PATH%"
 	rem set MSYS_ROOT=c:\tools\MinGW_462_Clang3.1\msys\1.0
-	rem set "PATH=c:\tools\tcc0926;%MSYS_ROOT%\bin;%MSYS_ROOT%\MinGW\bin;%cc_base_path%"
+	rem set "PATH=c:\tools\tcc0926;%MSYS_ROOT%\bin;%MSYS_ROOT%\MinGW\bin;%PATH%"
 	goto :EOF
 
 :L_TINYC64
 	set "COMPILER=tinyc64"
-	set "PATH=c:\tools\tcc0926x64;%cc_base_path%"
+	set "PATH=c:\tools\tcc0926x64;%PATH%"
 	goto :EOF
 
 :L_ORANGEC
 	set "COMPILER=orangec"
-	set "ORANGEC=c:\tools\orangec5041
-	set "PATH=%ORANGEC%\bin;%cc_base_path%"
-	set "INCLUDE=%ORANGEC%\include;%INCLUDE%"
-	set "LIB=%ORANGEC%\lib;%LIB%"
+	set "ORANGEC=%ProgramFiles(x86)%\Orange C 386"
+	set "PATH=%ORANGEC%\bin;%PATH%"
+	rem set "INCLUDE=%ORANGEC%\include;%INCLUDE%"
+	rem set "LIB=%ORANGEC%\lib;%LIB%"
 	goto :EOF
 
 :L_COINS
 	set "COMPILER=coins"
-	set "PATH=c:\tools\coins\bin;c:\cygwin\bin;%ProgramFiles(x86)%\java\jre7\bin;%cc_base_path%"
+	set "PATH=c:\tools\coins\bin;c:\cygwin\bin;%ProgramFiles(x86)%\java\jre7\bin;%PATH%"
 	goto :EOF
 
 :L_LSIC86
 	set "COMPILER=lsic86"
-	rem set "PATH=c:\tools\lsic86\bin;%cc_base_path%"
+	rem set "PATH=c:\tools\lsic86\bin;%PATH%"
 	set "PATH=c:\tools\lsic330c\bin;c:\bin;%windir%\system32;%windir%;"
 	goto :EOF

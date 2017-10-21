@@ -2,7 +2,7 @@ rem hung-up
 call setcc   tinyc64
 call cl_test tinyc    Tiny_C_0.96_x64
 call setcc   orangec
-call cl_test orangec  Orange_C_5.0.7.1
+call cl_test orangec  Orange_C_6.0.23.1
 call setcc   lccwin
 call cl_test lccwin64 lccwin64_3.8
 

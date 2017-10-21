@@ -639,6 +639,7 @@ rem	set MSG_PASS=%~4
 	exit /b 0
 
 :Compile1
+echo # %1 %2 2>>cons
 	set NM=%2
 	set TTL=%1/%2.c
 	if "%1"=="c99" set ADD_OPT=%O_C99% %ADD_OPT%
