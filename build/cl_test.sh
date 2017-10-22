@@ -44,7 +44,7 @@ test_all() {
 	echo "   target=$compi"
 
 	OBJ_DIR="obj/$compi"
-	BASE_DIR="../.."
+	BASE_DIR="../../.."
 	if [ ! -e "obj" ] ; then
 	  mkdir "obj"
 	fi

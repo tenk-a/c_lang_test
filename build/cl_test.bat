@@ -18,22 +18,44 @@ set DOS16_MODE=
 set ORIG_NAME=
 set ADD_FILE1=
 set CEXT=c
-rem set MSDOSPLAYER=
 
 set COMPI=%1
 if "%COMPI%"=="" set COMPI=%COMPILER%
 set NAME_CC=%~2
 if "%NAME_CC%"=="" set NAME_CC=%COMPI%
 
-if /i "%COMPI%"=="vc"      	goto L_VC
-if /i "%COMPI%"=="vc++"    	goto L_VC_PP
+if /i "%COMPI%"=="vc60"    	goto L_VC
+if /i "%COMPI%"=="vc++60"    	goto L_VC6_PP
 if /i "%COMPI%"=="vc71"    	goto L_VC
-if /i "%COMPI%"=="vc8"     	goto L_VC
-if /i "%COMPI%"=="vc9"     	goto L_VC
-if /i "%COMPI%"=="vc10"    	goto L_VC
-if /i "%COMPI%"=="vc11"    	goto L_VC
-if /i "%COMPI%"=="vc12"    	goto L_VC
-if /i "%COMPI%"=="vc++6"    	goto L_VC6_PP
+if /i "%COMPI%"=="vc++71"    	goto L_VC_PP
+if /i "%COMPI%"=="vc80"     	goto L_VC
+if /i "%COMPI%"=="vc++80"     	goto L_VC_PP
+if /i "%COMPI%"=="vc80x64"     	goto L_VC
+if /i "%COMPI%"=="vc++80x64"   	goto L_VC_PP
+if /i "%COMPI%"=="vc90"     	goto L_VC
+if /i "%COMPI%"=="vc++90"     	goto L_VC_PP
+if /i "%COMPI%"=="vc90x64"     	goto L_VC
+if /i "%COMPI%"=="vc++90x64"    goto L_VC_PP
+if /i "%COMPI%"=="vc100"    	goto L_VC
+if /i "%COMPI%"=="vc++100"    	goto L_VC_PP
+if /i "%COMPI%"=="vc100x64"    	goto L_VC
+if /i "%COMPI%"=="vc++100x64"   goto L_VC_PP
+if /i "%COMPI%"=="vc110"    	goto L_VC
+if /i "%COMPI%"=="vc++110"    	goto L_VC_PP
+if /i "%COMPI%"=="vc110x64"    	goto L_VC
+if /i "%COMPI%"=="vc++110x64"   goto L_VC_PP
+if /i "%COMPI%"=="vc120"    	goto L_VC
+if /i "%COMPI%"=="vc++120"    	goto L_VC_PP
+if /i "%COMPI%"=="vc120x64"    	goto L_VC
+if /i "%COMPI%"=="vc++120x64"   goto L_VC_PP
+if /i "%COMPI%"=="vc140"    	goto L_VC
+if /i "%COMPI%"=="vc++140"    	goto L_VC_PP
+if /i "%COMPI%"=="vc140x64"    	goto L_VC
+if /i "%COMPI%"=="vc++140x64"   goto L_VC_PP
+if /i "%COMPI%"=="vc141"    	goto L_VC
+if /i "%COMPI%"=="vc++141"    	goto L_VC_PP
+if /i "%COMPI%"=="vc141x64" 	goto L_VC
+if /i "%COMPI%"=="vc++141x64" 	goto L_VC_PP
 if /i "%COMPI%"=="gcc"   	goto L_MINGW
 if /i "%COMPI%"=="g++"   	goto L_MINGW_PP
 if /i "%COMPI%"=="mingw"   	goto L_MINGW
@@ -47,17 +69,18 @@ if /i "%COMPI%"=="dmc++"   	goto L_DMC_PP
 if /i "%COMPI%"=="watcom"      	goto L_OW
 if /i "%COMPI%"=="ow"      	goto L_OW
 if /i "%COMPI%"=="ow++"    	goto L_OW_PP
-if /i "%COMPI%"=="borlandc"     goto L_BCC
-if /i "%COMPI%"=="bcc"     	goto L_BCC
-if /i "%COMPI%"=="bcc++"   	goto L_BCC_PP
+if /i "%COMPI%"=="bcc32"	goto L_BCC32
+if /i "%COMPI%"=="bcc32++"	goto L_BCC32_PP
+if /i "%COMPI%"=="bcc32c"	goto L_BCC32C
+if /i "%COMPI%"=="bcc32c++"	goto L_BCC32C_PP
+if /i "%COMPI%"=="orangec"   	goto L_ORANGEC
 if /i "%COMPI%"=="occ"   	goto L_ORANGEC
 if /i "%COMPI%"=="occ++"   	goto L_ORANGEC_PP
-if /i "%COMPI%"=="orangec"   	goto L_ORANGEC
 if /i "%COMPI%"=="tinyc" 	goto L_TINYC
 if /i "%COMPI%"=="tinyc64"	goto L_TINYC
-if /i "%COMPI%"=="pcc" 		goto L_PCC
 if /i "%COMPI%"=="pellesc"   	goto L_PELLESC
 if /i "%COMPI%"=="pellesc64"   	goto L_PELLESC64
+if /i "%COMPI%"=="pcc" 		goto L_PCC
 if /i "%COMPI%"=="lccwin"   	goto L_LCCWIN
 if /i "%COMPI%"=="lccwin64"   	goto L_LCCWIN64
 if /i "%COMPI%"=="lcc"   	goto L_LCC
@@ -158,16 +181,28 @@ goto :L_END
   set DISP_VER2=findstr Version
   goto L_TEST
 
-:L_BCC_PP
+:L_BCC32_PP
   set O_CPP=-P
   set CC=bcc32 %O_CPP%
   set CPP_MODE=1
-:L_BCC
+:L_BCC32
   if "%CC%"=="" set CC=bcc32
   set O_CO=-c
   set O_OE=-e
   set DISP_VER=bcc32 
   set DISP_VER2=findstr Borland
+  goto L_TEST
+
+:L_BCC32C_PP
+  set O_CPP=-P
+  set CC=bcc32c %O_CPP%
+  set CPP_MODE=1
+:L_BCC32C
+  if "%CC%"=="" set CC=bcc32c
+  set O_CO=-c
+  set O_OE=-e
+  set DISP_VER=bcc32c
+  set DISP_VER2=findstr Embarcadero
   goto L_TEST
 
 :L_TINYC
@@ -253,20 +288,20 @@ goto :L_END
   set SRCCOPY_MODE=1
   set DISP_VER=echo LSI-C86 v3.30c sisyoku-ver.
   set DISP_VER2=findstr LSI-C86
-  rem set RUN=msdos.exe
+  set RUN=msdos.exe
   goto L_TEST
 
 :L_TEST
 echo C Language Feature Test
 echo    target=%COMPI%
 set     OBJ_DIR=obj\%COMPI%
-if "%BASE_DIR%"=="" set BASE_DIR=..\..\
 if not exist "obj"          mkdir "obj"
 if not exist "%OBJ_DIR%"    mkdir "%OBJ_DIR%"
 
-set	RESULT_DIR=result
+set	RESULT_DIR=..\result
 if not exist "%RESULT_DIR%" mkdir "%RESULT_DIR%"
-set RESULT_DIR=%RESULT_DIR%\
+set RESULT_DIR=result\
+if "%BASE_DIR%"=="" set BASE_DIR=..\..\..\
 pushd %OBJ_DIR%
 
 if exist "%ERR_FILE%" del %ERR_FILE%

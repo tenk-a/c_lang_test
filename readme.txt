@@ -4,6 +4,8 @@ http://www.6809.net/tenk/?C%E8%A8%80%E8%AA%9E%E6%A9%9F%E8%83%BD%E3%81%AE%E6%AF%9
 
 で使ったサンプルソースやバッチ＆ツール.
 
+buildディレクトリ
+
 cl_test.bat [コンパイラ] [詳しいコンパイラ名]
 	ソースをコンパイル＆実行して結果を result_???.csv に出力するバッチ.
 
@@ -30,9 +32,11 @@ all.bat cc_lsic64.bat 等
 	これも自分の持ってるコンパイラに合わせて必要に応じて書き換え.
 
 
+z_for_my_siteディレクトリ(自分のサイト用)
+
 tools/merge_cl_test_resluts.c ～.exe
 	cl_test で生成した複数の結果をまとめるツール.
-	出力は .csv か pyukiwiki 用テーブル. (ほぼうちのサイト専用)
+	出力は .csv か pyukiwiki 用テーブル. (うちのサイト専用)
 
 gen4mypyukiwiki.bat merge_results.bat
 	merge_cl_test_resluts.exe を使って頁 or csv を生成.
@@ -59,3 +63,5 @@ gen4mypyukiwiki.bat merge_results.bat
 2014-01-05	r.4
 ・void main について誤解してたので、c++/void_main_return_0.c を vc/ に移動、
   int main で最後のreturn 無しチェック c++/int_main_no_return.c を追加.
+2017-10-22
+・ビルド・フォルダ＆バッチ関係の修正（途中）
