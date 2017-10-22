@@ -4,6 +4,8 @@ rem 各自の環境に合わせて COMPILER や そのパスを設定し直してください。
 set INCLUDE= 
 set LIB= 
 
+if "%ProgramFiles(x86)%"=="" set "ProgramFiles(x86)=%ProgramFiles%"
+
 if "%cc_save_path%"=="" set "cc_save_path=%path%"
 set "cc_base_path=%cc_save_path%"
 set "PATH=%cc_base_path%"
@@ -44,6 +46,7 @@ if /i "%COMPILER%"=="pellesc"   goto L_PELLESC32
 if /i "%COMPILER%"=="pellesc64" goto L_PELLESC64
 if /i "%COMPILER%"=="tinyc"   	goto L_TINYC
 if /i "%COMPILER%"=="tinyc64"  	goto L_TINYC64
+if /i "%COMPILER%"=="occ"	goto L_ORANGEC
 if /i "%COMPILER%"=="orangec"	goto L_ORANGEC
 if /i "%COMPILER%"=="coins"   	goto L_COINS
 if /i "%COMPILER%"=="lsic86"   	goto L_LSIC86
@@ -60,83 +63,79 @@ goto :EOF
 
 
 :L_VC141
+	if "%VC141_DIR%"=="" set "VC141_DIR="%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community"
 	pushd .
-	call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\Common7\Tools\VsMSBuildCmd.bat"
-	call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
+	call "%VC141_DIR%\Common7\Tools\VsMSBuildCmd.bat"
+	call "%VC141_DIR%\VC\Auxiliary\Build\vcvars32.bat"
 	popd
-	goto L_VC_CMN
+	goto :EOF
 
 :L_VC141x64
+	if "%VC141_DIR%"=="" set "VC141_DIR="%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community"
 	pushd .
-	call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\Common7\Tools\VsMSBuildCmd.bat"
-	call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+	call "%VC141_DIR%\Common7\Tools\VsMSBuildCmd.bat"
+	call "%VC141_DIR%\VC\Auxiliary\Build\vcvars64.bat"
 	popd
-	goto L_VC_CMN64
+	goto :EOF
 
 :L_VC14
 	call "%VS140COMNTOOLS%vsvars32.bat"
-	goto L_VC_CMN
+	goto :EOF
 
 :L_VC14x64
 	call "%VS140COMNTOOLS%..\..\vc\bin\amd64\vcvars64.bat"
-	goto L_VC_CMN64
+	goto :EOF
 
 :L_VC12
 	call "%VS120COMNTOOLS%vsvars32.bat"
-	goto L_VC_CMN
+	goto :EOF
 
 :L_VC12x64
 	call "%VS120COMNTOOLS%..\..\vc\bin\amd64\vcvars64.bat"
-	goto L_VC_CMN64
+	goto :EOF
 
 :L_VC11
 	call "%VS110COMNTOOLS%vsvars32.bat"
-	goto L_VC_CMN
+	goto :EOF
 
 :L_VC11x64
 	call "%VS110COMNTOOLS%..\..\vc\bin\amd64\vcvars64.bat"
-	goto L_VC_CMN64
+	goto :EOF
 
 :L_VC10
 	call "%VS100COMNTOOLS%vsvars32.bat"
-	goto L_VC_CMN
+	goto :EOF
 
 :L_VC10x64
 	call "%VS100COMNTOOLS%..\..\vc\bin\amd64\vcvarsamd64.bat"
-	goto L_VC_CMN64
+	goto :EOF
 
 :L_VC9
 	call "%VS90COMNTOOLS%vsvars32.bat"
-	goto L_VC_CMN
+	goto :EOF
 
 :L_VC9x64
 	call "%VS90COMNTOOLS%..\..\vc\bin\amd64\vcvarsamd64.bat"
-	goto L_VC_CMN64
+	goto :EOF
 
 :L_VC8
 	call "%VS80COMNTOOLS%vsvars32.bat"
-	goto L_VC_CMN
+	goto :EOF
 
 :L_VC8x64
 	call "%VS80COMNTOOLS%..\..\vc\bin\amd64\vcvarsamd64.bat"
-	goto L_VC_CMN64
+	goto :EOF
 
 :L_VC71
 	if "%VC71_DIR%"=="" set "VC7_DIR=%ProgramFiles(x86)%\Microsoft Visual Studio .NET 2003"
 	set "INCLUDE=%VC71_DIR%\SDK\v1.1\include\"
 	set "LIB=%VC71_DIR%\SDK\v1.1\Lib\"
 	call "%VC71_DIR%\Common7\tools\vsvars32.bat"
-	goto L_VC_CMN
+	goto :EOF
 
 :L_VC6
 	if "%VC6_DIR%"=="" set "VC6_DIR=%ProgramFiles(x86)%\Microsoft Visual Studio"
 	call "%VC6_DIR%\VC6\bin\vcvars32.bat"
-	goto L_VC_CMN
-
-:L_VC_CMN
-	goto :EOF
-
-:L_VC_CMN64
 	goto :EOF
 
 :L_CYGWIN
@@ -182,7 +181,7 @@ goto :EOF
 	goto :EOF
 
 :L_OW19
-	SET WATCOM=C:\tools\watcom1.9
+	SET WATCOM=d:\tools\watcom1.9
 	SET "PATH=%WATCOM%\BINNT;%WATCOM%\BINW;%PATH%"
 	SET "EDPATH=%WATCOM%\EDDAT"
 	SET "INCLUDE=%WATCOM%\H;%WATCOM%\H\NT;%INCLUDE%"

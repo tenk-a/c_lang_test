@@ -1,15 +1,16 @@
 rem hung-up
 call setcc   tinyc64
 call cl_test tinyc    Tiny_C_0.96_x64
-call setcc   orangec
-call cl_test orangec  Orange_C_6.0.23.1
 call setcc   lccwin
 call cl_test lccwin64 lccwin64_3.8
 
 rem no hung
-rem call setcc   vc71
-rem call cl_test vc       vc7.1
-rem call cl_test vc++     vc++7.1
+call setcc   vc6
+call cl_test vc       vc6
+call cl_test vc++     vc++6
+call setcc   vc71
+call cl_test vc       vc7.1
+call cl_test vc++     vc++7.1
 call setcc   vc8
 call cl_test vc       vc8
 call cl_test vc++     vc++8
@@ -34,6 +35,12 @@ call cl_test vc++     vc++14
 call setcc   vc14x64
 call cl_test vc       vc14_x64
 call cl_test vc++     vc++14_x64
+call setcc   vc141
+call cl_test vc       vc14.1
+call cl_test vc++     vc++14.1
+call setcc   vc141x64
+call cl_test vc       vc14.1_x64
+call cl_test vc++     vc++14.1_x64
 
 call setcc   tdm32
 call cl_test mingw    mingw_gcc_4.7.1_tdm
@@ -44,26 +51,39 @@ call cl_test mingw++  mingw64_g++_4.7.1_tdm
 call setcc   mingw_345
 call cl_test mingw    mingw_gcc_3.4.5
 call cl_test mingw++  mingw_g++_3.4.5
+
 call setcc   dmc
 call cl_test dmc      dmc_v.8.56
 call cl_test dmc++    dmc++_v.8.56
+
 call setcc   ow
 call cl_test ow       Open_Watcom_C_v.1.9
 call cl_test ow++     Open_Watcom_C++_v.1.9
+
 call setcc   bcc
 call cl_test bcc      Borland_C_v5.5.1
 call cl_test bcc++    Borland_C++_v5.5.1
+
+call setcc   orangec
+call cl_test occ      Orange_C_6.0.24.1
+call cl_test occ++    Orange_C++_6.0.24.1
+
 call setcc   tinyc
 call cl_test tinyc    Tiny_C_0.96
+
 call setcc   pcc
 call cl_test pcc      pcc_2011_12_06_win32
+
 call setcc   pellesc64
 call cl_test pellesc64  Pelles_C_7.00.25_x64
+
 call setcc   lcc
 call cl_test lcc      lcc_4.2_mod_with_vc
+
 call setcc   coins
 call cl_test coins    coins_1.4.5.2_en_with_cygwin_gcc_3.4.4
 goto :EOF
+
 call setcc   clang
 call cl_test clang    clang_3.2_+mingw
 call cl_test clang++  clang++_3.2_+mingw

@@ -17,6 +17,7 @@ set RUN=
 set DOS16_MODE=
 set ORIG_NAME=
 set ADD_FILE1=
+set CEXT=c
 rem set MSDOSPLAYER=
 
 set COMPI=%1
@@ -49,10 +50,12 @@ if /i "%COMPI%"=="ow++"    	goto L_OW_PP
 if /i "%COMPI%"=="borlandc"     goto L_BCC
 if /i "%COMPI%"=="bcc"     	goto L_BCC
 if /i "%COMPI%"=="bcc++"   	goto L_BCC_PP
+if /i "%COMPI%"=="occ"   	goto L_ORANGEC
+if /i "%COMPI%"=="occ++"   	goto L_ORANGEC_PP
+if /i "%COMPI%"=="orangec"   	goto L_ORANGEC
 if /i "%COMPI%"=="tinyc" 	goto L_TINYC
 if /i "%COMPI%"=="tinyc64"	goto L_TINYC
 if /i "%COMPI%"=="pcc" 		goto L_PCC
-if /i "%COMPI%"=="orangec"   	goto L_ORANGEC
 if /i "%COMPI%"=="pellesc"   	goto L_PELLESC
 if /i "%COMPI%"=="pellesc64"   	goto L_PELLESC64
 if /i "%COMPI%"=="lccwin"   	goto L_LCCWIN
@@ -160,7 +163,7 @@ goto :L_END
   set CC=bcc32 %O_CPP%
   set CPP_MODE=1
 :L_BCC
-  set CC=bcc32
+  if "%CC%"=="" set CC=bcc32
   set O_CO=-c
   set O_OE=-e
   set DISP_VER=bcc32 
@@ -175,6 +178,10 @@ goto :L_END
   set DISP_VER2=findstr Compiler
   goto L_TEST
 
+:L_ORANGEC_PP
+  if exist __ext_cpp call gen_ext_cpp.bat
+  set DSTEXT=cpp
+  set CPP_MODE=1
 :L_ORANGEC
   set CC=occ
   set SRCCOPY_MODE=1
@@ -253,12 +260,13 @@ goto :L_END
 echo C Language Feature Test
 echo    target=%COMPI%
 set     OBJ_DIR=obj\%COMPI%
-set	BASE_DIR=..\..\
+if "%BASE_DIR%"=="" set BASE_DIR=..\..\
 if not exist "obj"          mkdir "obj"
 if not exist "%OBJ_DIR%"    mkdir "%OBJ_DIR%"
-rem set	RESULT_DIR=result
-rem if not exist "%RESULT_DIR%" mkdir "%RESULT_DIR%"
-rem set RESULT_DIR=%RESULT_DIR%\
+
+set	RESULT_DIR=result
+if not exist "%RESULT_DIR%" mkdir "%RESULT_DIR%"
+set RESULT_DIR=%RESULT_DIR%\
 pushd %OBJ_DIR%
 
 if exist "%ERR_FILE%" del %ERR_FILE%
@@ -639,26 +647,37 @@ rem	set MSG_PASS=%~4
 	exit /b 0
 
 :Compile1
-echo # %1 %2 2>>cons
+	echo # %1 %2 2>>cons
 	set NM=%2
-	set TTL=%1/%2.c
+	set TTL=%1/%2.%CEXT%
 	if "%1"=="c99" set ADD_OPT=%O_C99% %ADD_OPT%
 	if "%1"=="c11" set ADD_OPT=%O_C11% %ADD_OPT%
 	set O_OE_NAME=
 	if "%DOS16_MODE%"=="1" goto Compile1_dos16
-	set FNM=%2.c
-	set FNM2=%ADD_FILE1%
-	set ADD_FILE1=
+
+	set FNM=%2.%CEXT%
+	set DSTFNM=%2.%CEXT%
+	if not "%DSTEXT%"=="" set DSTFNM=%2.%DSTEXT%
 	set DIR_FN=%BASE_DIR%%1\%FNM%
+
+	set FNM2=
+	set DSTFNM2=
 	set DIR_FN2=
-	if not "%FNM2%"=="" set DIR_FN2=%BASE_DIR%%1\%FNM2%.c
+	if not "%ADD_FILE1%"=="" (
+		set FNM2=%ADD_FILE1%.%CEXT%
+		set DSTFNM2=%ADD_FILE1%.%CEXT%
+		if not "%DSTEXT%"=="" set DSTFNM2=%ADD_FILE1%.%DSTEXT%
+		set DIR_FN2=%BASE_DIR%%1\%FNM2%
+	)
+	set ADD_FILE1=
+
 	if not "%O_OE%"=="" set O_OE_NAME=%O_OE%%NM%.exe
 	if "%SRCCOPY_MODE%"=="" (
 		%RUN% %CC% %O_OE_NAME% %O_CC% %ADD_OPT% %DIR_FN% %DIR_FN2% %O_CC2% %ERN%>>%ERR_FILE%
 	) else (
-		copy %DIR_FN% .\
-		if not "%DIR_FN2%"=="" copy %DIR_FN2% .\
-		%RUN% %CC% %O_OE_NAME% %O_CC% %ADD_OPT% %FNM% %FNM2% %O_CC2% %ERN%>>%ERR_FILE%
+		copy %DIR_FN% .\%DSTFNM%
+		if not "%DIR_FN2%"=="" copy %DIR_FN2% .\%DSTFNM2%
+		%RUN% %CC% %O_OE_NAME% %O_CC% %ADD_OPT% %DSTFNM% %DSTFNM2% %O_CC2% %ERN%>>%ERR_FILE%
 	)
 	if not "%errorlevel%"=="0" (
 		echo %TTL% , %MSG_FAIL_C% 1>>%RESULT_FILE%
@@ -668,18 +687,18 @@ echo # %1 %2 2>>cons
 
 :Compile1_dos16
 	set /a COUNT=COUNT+1
-	set FNM=%COUNT%.c
+	set FNM=%COUNT%.%CEXT%
 	set FNM2=
 	set NM=%COUNT%
 	if not "%O_OE%"=="" set O_OE_NAME=%O_OE%%NM%.exe
 	if not "%ORIG_NAME%"=="" (
-		set TTL=%1/%ORIG_NAME%.c
+		set TTL=%1/%ORIG_NAME%.%CEXT%
 	)
 	set ORIG_NAME=
-	copy /b "%BASE_DIR%%1\%2.c" .\%FNM%
+	copy /b "%BASE_DIR%%1\%2.%CEXT%" .\%FNM%
 	if not "%ADD_FILE1%"=="" (
-	  set FNM2=%COUNT%b.c
-	  copy /b "%BASE_DIR%%1\%ADD_FILE1%.c" .\%COUNT%b.c
+	  set FNM2=%COUNT%b.%CEXT%
+	  copy /b "%BASE_DIR%%1\%ADD_FILE1%.%CEXT%" .\%COUNT%b.%CEXT%
 	  set ADD_FILE1=
 	)
 	%RUN% %CC% %O_OE_NAME% %O_CC% %ADD_OPT% %FNM% %FNM2% %O_CC2% %ERN%>>%ERR_FILE%
