@@ -288,7 +288,7 @@ goto :L_END
   set SRCCOPY_MODE=1
   set DISP_VER=echo LSI-C86 v3.30c sisyoku-ver.
   set DISP_VER2=findstr LSI-C86
-  set RUN=msdos.exe
+  rem set RUN=msdos.exe
   goto L_TEST
 
 :L_TEST

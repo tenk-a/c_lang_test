@@ -244,6 +244,7 @@ goto :EOF
 :L_LSIC86
 	set "COMPILER=lsic86"
 	rem set "PATH=c:\tools\lsic86\bin;%PATH%"
+	set "MSDOS_PATH=d:\tools\lsic330c\bin"
 	set "PATH=d:\tools\lsic330c\bin;c:\bin;%windir%\system32;%windir%;"
 	goto :EOF
 
