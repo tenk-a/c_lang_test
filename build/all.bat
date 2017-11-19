@@ -8,7 +8,8 @@ call cc_vc80.bat
 call cc_vc71.bat
 call cc_vc60.bat
 call cc_tdm.bat
-call cc_clang.bat
+call cc_mingw_msys2.bat
+call cc_clang_msys2.bat
 call cc_orangec.bat
 call cc_bcc32c.bat
 call cc_bc55.bat
@@ -19,5 +20,5 @@ call cc_pcc.bat
 call cc_pellesc.bat
 call cc_coins.bat
 call cc_lsic86.bat
-rem call cc_lcc.bat
+call cc_lcc.bat
 rem call cc_lccwin.bat
